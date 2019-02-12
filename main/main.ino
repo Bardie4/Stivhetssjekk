@@ -6,16 +6,13 @@
 #include "Wire.h"
 #include "Adafruit_LiquidCrystal.h" // "manage libraries"
 #include <ClickEncoder.h>           // Dropbox
-#include <TimerOne.h>               // "manage libraries"
-#include "HX711.h"                  // https://github.com/bogde/HX711
-#include <MenuSystem.h>
+#include <TimerOne.h>               //"manage libraries"
+#include "HX711.h"                  //https://github.com/bogde/HX711
+#include "MenuSystem.h"
 #include <EEPROM.h>
-#include "Button.h"
+//#include <avr/pgmspace.h>
 
-#include <avr/pgmspace.h>
-
-// "String 0" etc are strings to store in PROGMEM due to memory limit
-const char string_0[] PROGMEM = "<-:|Tilb.| Velg:|OK|";
+const char string_0[] PROGMEM = "<-:|Tilb.| Velg:|OK|"; // "String 0" etc are strings to store
 const char string_1[] PROGMEM = "        Bekreft:|OK|";
 const char string_2[] PROGMEM = "           Velg:|OK|";
 const char string_3[] PROGMEM = "         Videre:|OK|";
@@ -29,7 +26,7 @@ const char string_10[] PROGMEM = "Vekt[kg]|Konst[N/mm]";
 
 const char *const string_table[] PROGMEM = {string_0, string_1, string_2, string_3, string_4, string_5, string_6, string_7, string_8, string_9, string_10};
 
-char buffer[21]; // Buffer for fetching 21 bytes/characters from PROGMEM
+char buffer[21];
 
 #define MOT_STEP 19 // Motor step (+)
 #define MOT_DIR 18  // Motor direction (+)
@@ -42,19 +39,19 @@ char buffer[21]; // Buffer for fetching 21 bytes/characters from PROGMEM
 #define LC_DOUT 7 // Load Cell Data
 #define LC_CLK 8  // Load Cell CLK input
 
-#define ENC_1A 14 // Encoder analog and digital
+#define ENC_1A 14
 #define ENC_1D 3
 #define ENC_2A 15
 #define ENC_2D 2
 
-#define LCD_1 12 // LCD pins
+#define LCD_1 12
 #define LCD_2 13
 #define LCD_3 11
 
-#define MM_TO_PULSE 80UL; // Conversion factor
+#define MM_TO_PULSE 80UL;
 #define TENTH_MM_TO_PULSE 8UL;
 
-char inChar; // Serial buffer
+char inChar;
 
 // Screen ###########################
 Adafruit_LiquidCrystal lcd(LCD_1, LCD_2, LCD_3);
@@ -75,8 +72,6 @@ typedef struct
 {
   bool value = false, last = false, update = true, trig = false;
 } btn_t;
-
-Button button();
 
 int btn_trigdelay;
 const int btn_WAITTIME = 500;
@@ -133,7 +128,7 @@ public:
     lcd.print(menu_item.get_name());
     lcd.setCursor(0, 2);
     lcd.print("     ");
-    lcd.print(menu_item.get_value(), 3);
+    lcd.print(menu_item.get_value());
     lcd.setCursor(0, 3);
     if (!menu_item.has_focus())
     {
@@ -180,27 +175,28 @@ Menu menu3("<  Manuell styring");
 MenuItem menu3_1("   Motor opp 10mm >", &motor_drive_up_10mm);
 MenuItem menu3_2(" < Motor ned 10mm >", &motor_drive_down_10mm);
 MenuItem menu3_3(" < Sett 0pkt last >", &load_cell_tare);
-MenuItem menu3_4(" <  Aktiver motor >", &motor_poweron);
-NumericMenuItem menu3_5(" <      Kraft     ", &lcd_print_spring_const, 'f', 1, 1, 30, 1, format_int);
+MenuItem menu3_4(" <  Aktiver motor", &motor_poweron);
+NumericMenuItem menu3_5(" <      Kraft     >", &lcd_print_spring_const, 'f', 1, 1, 30, 1, format_int);
 
-// // ##################################
-// // BUTTONS ###############################
+// ##################################
 
-// bool button_get(int BTN, btn_t *btn)
-// {
-//   btn->value = digitalRead(BTN);
+// BUTTONS ###############################
 
-//   if (!btn->value)
-//   {
-//     btn->trig = true;
-//   }
-//   if (btn->value != btn->last)
-//   {
-//     btn->update = true;
-//   }
+bool button_get(int BTN, btn_t *btn)
+{
+  btn->value = digitalRead(BTN);
 
-//   btn->last = btn->value;
-// }
+  if (!btn->value)
+  {
+    btn->trig = true;
+  }
+  if (btn->value != btn->last)
+  {
+    btn->update = true;
+  }
+
+  btn->last = btn->value;
+}
 
 void button_block_until_OK()
 {
@@ -267,7 +263,7 @@ void lcd_write_text_float_line(int col, int row, String text, float val)
   lcd_clear_row(row);
   lcd.setCursor(col, row);
   lcd.print(text);
-  lcd.print(val, 3);
+  lcd.print(val, 4);
 }
 
 void lcd_write_text_line(int col, int row, String text)
@@ -295,9 +291,9 @@ void lcd_write_float_float_line(int row, float val_l, float val_r)
 {
   lcd_clear_row(row);
   lcd.setCursor(0, row);
-  lcd.print(val_l, 3);
+  lcd.print(val_l, 4);
   lcd.setCursor(10, row);
-  lcd.print(val_r, 3);
+  lcd.print(val_r, 4);
 }
 
 void lcd_clear_row(int row)
@@ -409,6 +405,7 @@ void load_cell_calibration()
     noInterrupts();
     weight_read = scale.get_units();
     interrupts();
+    weight_read_prev = weight_read;
     lcd_write_float_float_line(2, weight_read, calibration_temp);
 
     while (!btn_OK.trig)
@@ -418,11 +415,10 @@ void load_cell_calibration()
       weight_read = scale.get_units();
       interrupts();
 
-      if ((weight_read >= (weight_read_prev + 0.001)) || (weight_read <= (weight_read_prev - 0.001)) || (calibration_temp != calibration_temp_prev))
+      if (weight_read >= (weight_read_prev + 0.01) || weight_read <= (weight_read_prev - 0.01) || calibration_temp != calibration_temp_prev)
       {
         lcd_write_float_float_line(2, weight_read, calibration_temp);
       }
-
       weight_read_prev = weight_read;
       calibration_temp_prev = calibration_temp;
 
@@ -447,7 +443,7 @@ void load_cell_calibration()
         enc_dn.clockwise = 0;
       }
 
-      button.get(BTN_OK, &btn_OK);
+      button_get(BTN_OK, &btn_OK);
     }
 
     lcd.clear();
@@ -460,12 +456,11 @@ void load_cell_calibration()
     button_block_until_OK();
   }
 
-  calibration_temp = 0;
-  for (int j = 1; j <= 3; j++)
+  for (int j = 0; j <= 3; j++)
   {
-    calibration_temp += (calibration_factor[j]) / 3.0;
+    calibration_temp += (calibration_factor[j]);
   }
-  //calibration_temp /= 4;
+  calibration_temp /= 4;
 
   lcd.clear();
   lcd_write_text_line(0, 0, "Kalibrering ferdig ");
@@ -892,11 +887,11 @@ void spring_measurement()
   lcd.clear();
 
   float spring_const, spring_const_avg, spring_const_tot;
-  for (int index = 0; index <= i; index++)
+  for (int index = 0; index < i; index++)
   {
-    spring_const_avg += const_k[index] / (i + 1);
+    spring_const_avg = const_k[index] / i;
 
-    Serial.print("spring_const_avg: ");
+    Serial.print("spring_const_tot: ");
     Serial.println(spring_const_avg);
     Serial.print("k: ");
     Serial.print(index);
@@ -1088,7 +1083,6 @@ void timerIsr()
 {
   encoder_up->service();
   encoder_dn->service();
-  load_cell.reading++;
 
   encoder_get(encoder_up, &enc_up);
   encoder_get(encoder_dn, &enc_dn);
@@ -1101,14 +1095,14 @@ void timerIsr()
   if (btn_trigdelay >= btn_WAITTIME)
   {
     // Poll buttons
-    button.get(BTN_OK, &btn_OK);
-    button.get(BTN_TB, &btn_TB);
+    button_get(BTN_OK, &btn_OK);
+    button_get(BTN_TB, &btn_TB);
 
     btn_trigdelay = 0;
   }
 
   // Disable motor if Innstillinger pressed
-  button.get(BTN_IN, &btn_IN);
+  button_get(BTN_IN, &btn_IN);
   if (btn_IN.trig)
   {
     motor_shutdown();
@@ -1116,6 +1110,8 @@ void timerIsr()
   }
 }
 
+
+// SETUP AND LOOP ########################
 void setup()
 {
   Serial.begin(9600);
