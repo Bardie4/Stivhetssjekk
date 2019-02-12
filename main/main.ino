@@ -775,6 +775,9 @@ void setup()
   pinMode(BTN_TB, INPUT);
   pinMode(BTN_IN, INPUT);
 
+  // lcd
+  screen.begin();
+
   // Menu
   menu_init();
 }

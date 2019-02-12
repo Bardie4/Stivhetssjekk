@@ -13,16 +13,22 @@ Adafruit_LiquidCrystal lcd(LCD_1, LCD_2, LCD_3);
 
 LCD::LCD()
 {
+}
+
+void LCD::begin()
+{
   // set up the LCD's number of rows and columns:
   lcd.begin(20, 3);
 }
 
-void LCD::print(String c){
+void LCD::print(String c)
+{
   lcd.print(c);
 }
 
-void LCD::clear(){
-    lcd.clear();
+void LCD::clear()
+{
+  lcd.clear();
 }
 
 void LCD::write_text_int_line(int col, int row, String text, int val)
@@ -86,32 +92,33 @@ void LCD::clear_col(int col)
   }
 }
 
-void LCD::draw_render(String name){
-    lcd.clear();
-    lcd.setCursor(0, 0);
-    lcd.print(name);
-    lcd.setCursor(0, 1);
+void LCD::draw_render(String name)
+{
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print(name);
+  lcd.setCursor(0, 1);
 }
 
-void LCD::draw_render_menu_item(String name, const char * c){
-    lcd.print(name);
-    lcd.setCursor(0, 3);
-    lcd.print(c);
+void LCD::draw_render_menu_item(String name, const char *c)
+{
+  lcd.print(name);
+  lcd.setCursor(0, 3);
+  lcd.print(c);
 }
 
-void LCD::draw_render_numeric_menu_item(String name, float f){
-    lcd.print(name);
-    lcd.setCursor(0, 2);
-    lcd.print("     ");
-    lcd.print(f);
-    lcd.setCursor(0, 3);
+void LCD::draw_render_numeric_menu_item(String name, float f)
+{
+  lcd.print(name);
+  lcd.setCursor(0, 2);
+  lcd.print("     ");
+  lcd.print(f);
+  lcd.setCursor(0, 3);
 }
 
-void LCD::draw_render_menu(String name, const char * c){
-    lcd.print(name);
-    lcd.setCursor(0, 3);
-    lcd.print(c);
+void LCD::draw_render_menu(String name, const char *c)
+{
+  lcd.print(name);
+  lcd.setCursor(0, 3);
+  lcd.print(c);
 }
-
-
-
