@@ -11,6 +11,10 @@
 #include "Wire.h"
 #include <EEPROM.h>
 
+#define LCD_1 12
+#define LCD_2 13
+#define LCD_3 11
+
 class LCD
 {
   public:

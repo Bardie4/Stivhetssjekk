@@ -12,6 +12,7 @@
 #include <EEPROM.h>
 //#include <avr/pgmspace.h>
 #include "LCD.h"
+#include "stepper.h"
 
 const char string_0[] PROGMEM = "<-:|Tilb.| Velg:|OK|"; // "String 0" etc are strings to store
 const char string_1[] PROGMEM = "        Bekreft:|OK|";
@@ -45,12 +46,12 @@ char buffer[21];
 #define ENC_2A 15
 #define ENC_2D 2
 
-#define LCD_1 12
-#define LCD_2 13
-#define LCD_3 11
+// #define LCD_1 12
+// #define LCD_2 13
+// #define LCD_3 11
 
-#define MM_TO_PULSE 80UL;
-#define TENTH_MM_TO_PULSE 8UL;
+// #define MM_TO_PULSE 80UL;
+// #define TENTH_MM_TO_PULSE 8UL;
 
 char inChar;
 
@@ -92,13 +93,22 @@ struct scl_t
 } load_cell;
 
 // Motor
-bool motor_disabled = false;
+stepper motor(MOT_STEP, MOT_DIR, MOT_ENA);
+// bool motor_disabled = false;
 
 const float CONST_g = 9.807;
 
 // Forward declarations
 const String format_float(const float value);
 const String format_int(const float value);
+void lcd_PROGMEM_to_buffer(int index);
+// Pointer to stepper class member function
+// void (stepper::*up10) (void) = &stepper::drive_up_10mm;
+// void (stepper::*dn10) (void) = &stepper::drive_down_10mm;
+// void (stepper::*pwr) (void) = &stepper::poweron;
+void up10(){motor.drive_up_10mm();};
+void dn10(){motor.drive_down_10mm();};
+void pwr(){motor.poweron();};
 
 class MyRenderer : public MenuComponentRenderer
 {
@@ -145,10 +155,10 @@ MyRenderer my_renderer;
 
 void spring_measurement();
 void load_cell_calibration();
-void motor_drive_down_10mm();
-void motor_drive_up_10mm();
+// void motor_drive_down_10mm();
+// void motor_drive_up_10mm();
 void load_cell_tare();
-void motor_poweron();
+// void motor_poweron();
 void lcd_print_force();
 
 MenuSystem ms(my_renderer);
@@ -163,10 +173,10 @@ NumericMenuItem menu2_2(" < Maks kraft [kg]>", nullptr, 'v', 0.1, 1.0, 5.0, 0.1,
 NumericMenuItem menu2_3(" < steg/sjekk [mm]>", nullptr, 's', 1, 1, 10, 1, format_int);
 MenuItem menu2_4(" <     START", &spring_measurement); // Start_measurement
 Menu menu3("<  Manuell styring");
-MenuItem menu3_1("   Motor opp 10mm >", &motor_drive_up_10mm);
-MenuItem menu3_2(" < Motor ned 10mm >", &motor_drive_down_10mm);
+MenuItem menu3_1("   Motor opp 10mm >", &up10);
+MenuItem menu3_2(" < Motor ned 10mm >", &dn10);
 MenuItem menu3_3(" < Sett 0pkt last >", &load_cell_tare);
-MenuItem menu3_4(" <  Aktiver motor", &motor_poweron);
+MenuItem menu3_4(" <  Aktiver motor", &pwr);
 NumericMenuItem menu3_5(" <      Kraft     >", &lcd_print_spring_const, 'f', 1, 1, 30, 1, format_int);
 
 // ##################################
@@ -240,68 +250,6 @@ void encoder_get(ClickEncoder *encoder, enc_t *enc)
 }
 
 // LCD ###################################
-
-// void lcd_write_text_int_line(int col, int row, String text, int val)
-// {
-//   lcd_clear_row(row);
-//   lcd.setCursor(col, row);
-//   lcd.print(text);
-//   lcd.print(val);
-// }
-
-// void lcd_write_text_float_line(int col, int row, String text, float val)
-// {
-//   lcd_clear_row(row);
-//   lcd.setCursor(col, row);
-//   lcd.print(text);
-//   lcd.print(val, 4);
-// }
-
-// void lcd_write_text_line(int col, int row, String text)
-// {
-//   lcd_clear_row(row);
-//   lcd.setCursor(col, row);
-//   lcd.print(text);
-// }
-
-// void lcd_write_value_line(int col, int row, int val)
-// {
-//   lcd_clear_row(row);
-//   lcd.setCursor(col, row);
-//   lcd.print(val);
-// }
-
-// void lcd_write_float_line(int col, int row, float val)
-// {
-//   lcd_clear_row(row);
-//   lcd.setCursor(col, row);
-//   lcd.print(val, 4);
-// }
-
-// void lcd_write_float_float_line(int row, float val_l, float val_r)
-// {
-//   lcd_clear_row(row);
-//   lcd.setCursor(0, row);
-//   lcd.print(val_l, 4);
-//   lcd.setCursor(10, row);
-//   lcd.print(val_r, 4);
-// }
-
-// void lcd_clear_row(int row)
-// {
-//   lcd.setCursor(0, row);
-//   strcpy_P(buffer, (char *)pgm_read_word(&(string_table[4])));
-//   lcd.print(buffer);
-// }
-
-// void lcd_clear_col(int col)
-// {
-//   for (int i = 0; i < 4; i++)
-//   {
-//     lcd.setCursor(col, i);
-//     lcd.print(" ");
-//   }
-// }
 
 void lcd_print_spring_const()
 {
@@ -468,189 +416,6 @@ void load_cell_calibration()
   ms.display();
 }
 
-// MOTOR #################################
-void motor_init()
-{
-  // Sets the two pins as Outputs
-  pinMode(MOT_STEP, OUTPUT);
-  pinMode(MOT_DIR, OUTPUT);
-  pinMode(MOT_ENA, OUTPUT);
-
-  digitalWrite(MOT_STEP, HIGH);
-  digitalWrite(MOT_DIR, HIGH);
-  digitalWrite(MOT_ENA, HIGH); // HIGH is off
-}
-
-void motor_enable()
-{
-  if (!motor_disabled)
-  {
-    digitalWrite(MOT_ENA, LOW); // LOW is on
-  }
-}
-
-void motor_disable()
-{
-  digitalWrite(MOT_ENA, HIGH); // HIGH is off
-}
-
-void motor_poweron()
-{
-  motor_disabled = false;
-}
-
-void motor_shutdown()
-{
-  motor_disable();
-  motor_disabled = true;
-}
-
-unsigned long motor_mm_to_pulses(unsigned long mm)
-{
-  return mm * MM_TO_PULSE;
-}
-
-unsigned long motor_tenth_mm_to_pulses(unsigned long tenth_mm)
-{
-  return tenth_mm * TENTH_MM_TO_PULSE;
-}
-
-void motor_drive_distance(unsigned long distance_mm, int direction)
-{
-  unsigned long pulses = motor_mm_to_pulses(distance_mm);
-
-  motor_enable();
-
-  if (direction == -1)
-  {
-    // Drive down
-    digitalWrite(MOT_DIR, LOW);
-    // Send the necessary amount of pulses
-    for (unsigned long i = 0; i < pulses; i++)
-    {
-      digitalWrite(MOT_STEP, HIGH);
-      delayMicroseconds(500);
-      digitalWrite(MOT_STEP, LOW);
-      delayMicroseconds(500);
-    }
-  }
-  else if (direction == 1)
-  {
-    // Drive up
-    digitalWrite(MOT_DIR, HIGH);
-    // Send the necessary amount of pulses
-    for (unsigned long i = 0; i < pulses; i++)
-    {
-      digitalWrite(MOT_STEP, HIGH);
-      delayMicroseconds(500);
-      digitalWrite(MOT_STEP, LOW);
-      delayMicroseconds(500);
-    }
-  }
-
-  motor_disable();
-}
-
-void motor_drive_distance_accurate(unsigned long distance_tenth_mm, int direction)
-{
-  unsigned long pulses = motor_tenth_mm_to_pulses(distance_tenth_mm);
-
-  motor_enable();
-
-  if (direction == -1)
-  {
-    // Drive down
-    digitalWrite(MOT_DIR, LOW);
-    // Send the necessary amount of pulses
-    for (unsigned long i = 0; i < pulses; i++)
-    {
-      digitalWrite(MOT_STEP, HIGH);
-      delayMicroseconds(500);
-      digitalWrite(MOT_STEP, LOW);
-      delayMicroseconds(500);
-    }
-  }
-  else if (direction == 1)
-  {
-    // Drive up
-    digitalWrite(MOT_DIR, HIGH);
-    // Send the necessary amount of pulses
-    for (unsigned long i = 0; i < pulses; i++)
-    {
-      digitalWrite(MOT_STEP, HIGH);
-      delayMicroseconds(500);
-      digitalWrite(MOT_STEP, LOW);
-      delayMicroseconds(500);
-    }
-  }
-
-  motor_disable();
-}
-
-void motor_drive_down_pulse()
-{
-  motor_enable();
-
-  digitalWrite(MOT_DIR, LOW);
-
-  digitalWrite(MOT_STEP, HIGH);
-  delayMicroseconds(500);
-  digitalWrite(MOT_STEP, LOW);
-  delayMicroseconds(500);
-
-  motor_disable();
-}
-
-void motor_drive_up_pulse()
-{
-  motor_enable();
-
-  digitalWrite(MOT_DIR, HIGH);
-
-  digitalWrite(MOT_STEP, HIGH);
-  delayMicroseconds(500);
-  digitalWrite(MOT_STEP, LOW);
-  delayMicroseconds(500);
-
-  motor_disable();
-}
-
-void motor_drive_down_10mm()
-{
-  motor_enable();
-
-  unsigned long pulses = motor_mm_to_pulses(10);
-
-  digitalWrite(MOT_DIR, LOW);
-  for (unsigned long i = 0; i < pulses; i++)
-  {
-    digitalWrite(MOT_STEP, HIGH);
-    delayMicroseconds(500);
-    digitalWrite(MOT_STEP, LOW);
-    delayMicroseconds(500);
-  }
-
-  motor_disable();
-}
-
-void motor_drive_up_10mm()
-{
-  motor_enable();
-
-  unsigned long pulses = motor_mm_to_pulses(10);
-
-  digitalWrite(MOT_DIR, HIGH);
-  for (unsigned long i = 0; i < pulses; i++)
-  {
-    digitalWrite(MOT_STEP, HIGH);
-    delayMicroseconds(500);
-    digitalWrite(MOT_STEP, LOW);
-    delayMicroseconds(500);
-  }
-
-  motor_disable();
-}
-
 // SPRING ################################
 float spring_const_to_EEPROM(float x, float weight_read, int addr)
 {
@@ -711,7 +476,7 @@ void spring_measurement()
   while (!found_min_close)
   {
     // Safety, override motor
-    if (motor_disabled)
+    if (motor.disabled)
     {
       spring_measurement_quit();
       return;
@@ -723,7 +488,7 @@ void spring_measurement()
 
     if (weight_read < min_kg)
     {
-      motor_drive_distance(2, -1);
+      motor.drive_distance(2, -1);
     }
     else
     {
@@ -744,7 +509,7 @@ void spring_measurement()
   while (!found_min_closer)
   {
     // Safety, override motor
-    if (motor_disabled)
+    if (motor.disabled)
     {
       spring_measurement_quit();
       return;
@@ -756,11 +521,11 @@ void spring_measurement()
 
     if (weight_read < (min_kg - 0.01))
     {
-      motor_drive_distance_accurate(5, -1);
+      motor.drive_distance_accurate(5, -1);
     }
     else if (weight_read > (min_kg + 0.01))
     {
-      motor_drive_distance_accurate(5, 1);
+      motor.drive_distance_accurate(5, 1);
     }
     else
     {
@@ -781,7 +546,7 @@ void spring_measurement()
   while (!found_min_perfect)
   {
     // Safety, override motor
-    if (motor_disabled)
+    if (motor.disabled)
     {
       spring_measurement_quit();
       return;
@@ -793,11 +558,11 @@ void spring_measurement()
 
     if (weight_read < (min_kg - 0.001))
     {
-      motor_drive_distance_accurate(1, -1);
+      motor.drive_distance_accurate(1, -1);
     }
     else if (weight_read > (min_kg + 0.001))
     {
-      motor_drive_distance_accurate(1, 1);
+      motor.drive_distance_accurate(1, 1);
     }
     else
     {
@@ -836,7 +601,7 @@ void spring_measurement()
   while (!found_max)
   {
     // Safety, override motor
-    if (motor_disabled)
+    if (motor.disabled)
     {
       spring_measurement_quit();
       return;
@@ -844,7 +609,7 @@ void spring_measurement()
 
     if (weight_read < max_kg)
     {
-      motor_drive_distance(step_per_check, -1);
+      motor.drive_distance(step_per_check, -1);
 
       delay(1000);
 
@@ -910,7 +675,7 @@ void spring_measurement()
   while (!finished_release)
   {
     // Safety, override motor
-    if (motor_disabled)
+    if (motor.disabled)
     {
       spring_measurement_quit();
       return;
@@ -922,7 +687,7 @@ void spring_measurement()
 
     if (weight_read > 0.001)
     {
-      motor_drive_up_10mm();
+      motor.drive_up_10mm();
       delay(1000);
 
       noInterrupts();
@@ -1096,7 +861,7 @@ void timerIsr()
   button_get(BTN_IN, &btn_IN);
   if (btn_IN.trig)
   {
-    motor_shutdown();
+    motor.shutdown();
     btn_IN.trig = 0;
   }
 }
@@ -1109,8 +874,6 @@ void setup()
 
   Timer1.initialize(1000);
   Timer1.attachInterrupt(timerIsr);
-
-
 
   // Encoder
   encoder_up = new ClickEncoder(ENC_1A, ENC_1D);
@@ -1126,9 +889,6 @@ void setup()
 
   // Menu
   menu_init();
-
-  // Motor
-  motor_init();
 }
 
 void loop()

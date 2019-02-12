@@ -9,7 +9,7 @@
 #include "Wire.h"
 #include <EEPROM.h>
 
-Adafruit_LiquidCrystal lcd(12, 13, 11);
+Adafruit_LiquidCrystal lcd(LCD_1, LCD_2, LCD_3);
 
 LCD::LCD()
 {
