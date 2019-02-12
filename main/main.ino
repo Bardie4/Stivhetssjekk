@@ -6,11 +6,12 @@
 #include "Wire.h"
 #include "Adafruit_LiquidCrystal.h" // "manage libraries"
 #include <ClickEncoder.h>           // Dropbox
-#include <TimerOne.h>               //"manage libraries"
-#include "HX711.h"                  //https://github.com/bogde/HX711
-#include "MenuSystem.h"
+#include <TimerOne.h>               // "manage libraries"
+#include "HX711.h"                  // https://github.com/bogde/HX711
+#include "MenuSystem.h"             // edited version of https://github.com/jonblack/arduino-menusystem
 #include <EEPROM.h>
 //#include <avr/pgmspace.h>
+#include "LCD.h"
 
 const char string_0[] PROGMEM = "<-:|Tilb.| Velg:|OK|"; // "String 0" etc are strings to store
 const char string_1[] PROGMEM = "        Bekreft:|OK|";
@@ -54,7 +55,8 @@ char buffer[21];
 char inChar;
 
 // Screen ###########################
-Adafruit_LiquidCrystal lcd(LCD_1, LCD_2, LCD_3);
+//Adafruit_LiquidCrystal lcd(LCD_1, LCD_2, LCD_3);
+LCD screen;
 
 // Encoders #########################
 ClickEncoder *encoder_up, *encoder_dn;
@@ -103,51 +105,40 @@ class MyRenderer : public MenuComponentRenderer
 public:
   void render(Menu const &menu) const
   {
-    lcd.clear();
-    lcd.setCursor(0, 0);
-    lcd.print(menu.get_name());
-    lcd.setCursor(0, 1);
+    screen.draw_render(menu.get_name());
     menu.get_current_component()->render(*this);
   }
 
   void render_menu_item(MenuItem const &menu_item) const
   {
-    lcd.print(menu_item.get_name());
-    lcd.setCursor(0, 3);
     lcd_PROGMEM_to_buffer(0);
-    lcd.print(buffer);
+    screen.draw_render_menu_item(buffer, menu_item.get_name());
   }
 
   void render_back_menu_item(BackMenuItem const &menu_item) const
   {
-    lcd.print(menu_item.get_name());
+    screen.print(menu_item.get_name());
   }
 
   void render_numeric_menu_item(NumericMenuItem const &menu_item) const
   {
-    lcd.print(menu_item.get_name());
-    lcd.setCursor(0, 2);
-    lcd.print("     ");
-    lcd.print(menu_item.get_value());
-    lcd.setCursor(0, 3);
+    screen.draw_render_numeric_menu_item(menu_item.get_name(), menu_item.get_value());
     if (!menu_item.has_focus())
     {
       lcd_PROGMEM_to_buffer(0);
-      lcd.print(buffer);
+      screen.print(buffer);
     }
     else
     {
       lcd_PROGMEM_to_buffer(1);
-      lcd.print(buffer);
+      screen.print(buffer);
     }
   }
 
   void render_menu(Menu const &menu) const
   {
-    lcd.print(menu.get_name());
-    lcd.setCursor(0, 3);
     lcd_PROGMEM_to_buffer(2);
-    lcd.print(buffer);
+    screen.draw_render_menu(menu.get_name(), buffer);
   }
 };
 MyRenderer my_renderer;
@@ -250,73 +241,73 @@ void encoder_get(ClickEncoder *encoder, enc_t *enc)
 
 // LCD ###################################
 
-void lcd_write_text_int_line(int col, int row, String text, int val)
-{
-  lcd_clear_row(row);
-  lcd.setCursor(col, row);
-  lcd.print(text);
-  lcd.print(val);
-}
+// void lcd_write_text_int_line(int col, int row, String text, int val)
+// {
+//   lcd_clear_row(row);
+//   lcd.setCursor(col, row);
+//   lcd.print(text);
+//   lcd.print(val);
+// }
 
-void lcd_write_text_float_line(int col, int row, String text, float val)
-{
-  lcd_clear_row(row);
-  lcd.setCursor(col, row);
-  lcd.print(text);
-  lcd.print(val, 4);
-}
+// void lcd_write_text_float_line(int col, int row, String text, float val)
+// {
+//   lcd_clear_row(row);
+//   lcd.setCursor(col, row);
+//   lcd.print(text);
+//   lcd.print(val, 4);
+// }
 
-void lcd_write_text_line(int col, int row, String text)
-{
-  lcd_clear_row(row);
-  lcd.setCursor(col, row);
-  lcd.print(text);
-}
+// void lcd_write_text_line(int col, int row, String text)
+// {
+//   lcd_clear_row(row);
+//   lcd.setCursor(col, row);
+//   lcd.print(text);
+// }
 
-void lcd_write_value_line(int col, int row, int val)
-{
-  lcd_clear_row(row);
-  lcd.setCursor(col, row);
-  lcd.print(val);
-}
+// void lcd_write_value_line(int col, int row, int val)
+// {
+//   lcd_clear_row(row);
+//   lcd.setCursor(col, row);
+//   lcd.print(val);
+// }
 
-void lcd_write_float_line(int col, int row, float val)
-{
-  lcd_clear_row(row);
-  lcd.setCursor(col, row);
-  lcd.print(val, 4);
-}
+// void lcd_write_float_line(int col, int row, float val)
+// {
+//   lcd_clear_row(row);
+//   lcd.setCursor(col, row);
+//   lcd.print(val, 4);
+// }
 
-void lcd_write_float_float_line(int row, float val_l, float val_r)
-{
-  lcd_clear_row(row);
-  lcd.setCursor(0, row);
-  lcd.print(val_l, 4);
-  lcd.setCursor(10, row);
-  lcd.print(val_r, 4);
-}
+// void lcd_write_float_float_line(int row, float val_l, float val_r)
+// {
+//   lcd_clear_row(row);
+//   lcd.setCursor(0, row);
+//   lcd.print(val_l, 4);
+//   lcd.setCursor(10, row);
+//   lcd.print(val_r, 4);
+// }
 
-void lcd_clear_row(int row)
-{
-  lcd.setCursor(0, row);
-  strcpy_P(buffer, (char *)pgm_read_word(&(string_table[4])));
-  lcd.print(buffer);
-}
+// void lcd_clear_row(int row)
+// {
+//   lcd.setCursor(0, row);
+//   strcpy_P(buffer, (char *)pgm_read_word(&(string_table[4])));
+//   lcd.print(buffer);
+// }
 
-void lcd_clear_col(int col)
-{
-  for (int i = 0; i < 4; i++)
-  {
-    lcd.setCursor(col, i);
-    lcd.print(" ");
-  }
-}
+// void lcd_clear_col(int col)
+// {
+//   for (int i = 0; i < 4; i++)
+//   {
+//     lcd.setCursor(col, i);
+//     lcd.print(" ");
+//   }
+// }
 
 void lcd_print_spring_const()
 {
   int i = menu3_5.get_value();
   float const_k = EEPROM.read(i);
-  lcd_write_text_float_line(0, 3, "Kraft: ", const_k);
+  screen.write_text_float_line(0, 3, "Kraft: ", const_k);
   delay(2000);
 }
 
@@ -365,16 +356,16 @@ void load_cell_calibration()
   float calibration_factor[4];
   float calibration_avg;
 
-  lcd.clear();
+  screen.clear();
   lcd_PROGMEM_to_buffer(5);
-  lcd_write_text_line(0, 1, buffer);
+  screen.write_text_line(0, 1, buffer);
 
   lcd_PROGMEM_to_buffer(3);
-  lcd_write_text_line(0, 3, buffer);
+  screen.write_text_line(0, 3, buffer);
   button_block_until_OK();
-  lcd.clear();
+  screen.clear();
   lcd_PROGMEM_to_buffer(6);
-  lcd_write_text_line(0, 1, buffer);
+  screen.write_text_line(0, 1, buffer);
 
   // Call set_scale() with no parameter.
   noInterrupts();
@@ -391,22 +382,22 @@ void load_cell_calibration()
   for (int i = 1; i <= 3; i++)
   {
 
-    lcd.clear();
+    screen.clear();
     lcd_PROGMEM_to_buffer(6);
-    lcd_write_text_int_line(0, 1, buffer, i);
+    screen.write_text_int_line(0, 1, buffer, i);
 
     lcd_PROGMEM_to_buffer(3);
-    lcd_write_text_line(0, 3, buffer);
+    screen.write_text_line(0, 3, buffer);
     button_block_until_OK();
 
-    lcd_write_text_float_line(0, 0, "Vekt: ", weight[i]);
-    lcd_write_text_line(0, 1, "Avlest   |   Kal.fak");
+    screen.write_text_float_line(0, 0, "Vekt: ", weight[i]);
+    screen.write_text_line(0, 1, "Avlest   |   Kal.fak");
 
     noInterrupts();
     weight_read = scale.get_units();
     interrupts();
     weight_read_prev = weight_read;
-    lcd_write_float_float_line(2, weight_read, calibration_temp);
+    screen.write_float_float_line(2, weight_read, calibration_temp);
 
     while (!btn_OK.trig)
     {
@@ -417,7 +408,7 @@ void load_cell_calibration()
 
       if (weight_read >= (weight_read_prev + 0.01) || weight_read <= (weight_read_prev - 0.01) || calibration_temp != calibration_temp_prev)
       {
-        lcd_write_float_float_line(2, weight_read, calibration_temp);
+        screen.write_float_float_line(2, weight_read, calibration_temp);
       }
       weight_read_prev = weight_read;
       calibration_temp_prev = calibration_temp;
@@ -446,12 +437,12 @@ void load_cell_calibration()
       button_get(BTN_OK, &btn_OK);
     }
 
-    lcd.clear();
+    screen.clear();
 
-    lcd_write_text_float_line(0, 1, "Kal. faktor: ", calibration_temp);
-    lcd_write_text_float_line(0, 2, "Vekt: ", weight_read);
+    screen.write_text_float_line(0, 1, "Kal. faktor: ", calibration_temp);
+    screen.write_text_float_line(0, 2, "Vekt: ", weight_read);
     lcd_PROGMEM_to_buffer(3);
-    lcd_write_text_line(0, 3, buffer);
+    screen.write_text_line(0, 3, buffer);
     calibration_factor[i] = calibration_temp;
     button_block_until_OK();
   }
@@ -462,11 +453,11 @@ void load_cell_calibration()
   }
   calibration_temp /= 4;
 
-  lcd.clear();
-  lcd_write_text_line(0, 0, "Kalibrering ferdig ");
-  lcd_write_text_float_line(0, 1, "Kal. faktor: ", calibration_temp);
+  screen.clear();
+  screen.write_text_line(0, 0, "Kalibrering ferdig ");
+  screen.write_text_float_line(0, 1, "Kal. faktor: ", calibration_temp);
   lcd_PROGMEM_to_buffer(3);
-  lcd_write_text_line(0, 3, buffer);
+  screen.write_text_line(0, 3, buffer);
   button_block_until_OK();
 
   noInterrupts();
@@ -695,10 +686,10 @@ void spring_measurement()
   float const_k[64];
 
   // Spring must be attached and hanging loosely
-  lcd.clear();
-  lcd_write_text_line(0, 1, "Starter test");
+  screen.clear();
+  screen.write_text_line(0, 1, "Starter test");
   lcd_PROGMEM_to_buffer(3);
-  lcd_write_text_line(0, 3, buffer);
+  screen.write_text_line(0, 3, buffer);
   button_block_until_OK();
 
   noInterrupts();
@@ -712,11 +703,11 @@ void spring_measurement()
 
   bool found_min_close = false, found_min_closer = false, found_min_perfect = false;
   // Get close to minimum
-  lcd.clear();
-  lcd_write_text_line(0, 0, "0-pkt:");
-  lcd_write_float_line(3, 1, min_kg);
+  screen.clear();
+  screen.write_text_line(0, 0, "0-pkt:");
+  screen.write_float_line(3, 1, min_kg);
   lcd_PROGMEM_to_buffer(9);
-  lcd_write_text_line(0, 2, buffer);
+  screen.write_text_line(0, 2, buffer);
   while (!found_min_close)
   {
     // Safety, override motor
@@ -743,13 +734,13 @@ void spring_measurement()
     noInterrupts();
     weight_read = scale.get_units();
     interrupts();
-    lcd_write_float_line(3, 3, weight_read);
+    screen.write_float_line(3, 3, weight_read);
     delay(500);
   }
 
   // Find accurate minimum
   lcd_PROGMEM_to_buffer(9);
-  lcd_write_text_line(0, 2, buffer);
+  screen.write_text_line(0, 2, buffer);
   while (!found_min_closer)
   {
     // Safety, override motor
@@ -780,12 +771,12 @@ void spring_measurement()
     noInterrupts();
     weight_read = scale.get_units();
     interrupts();
-    lcd_write_float_line(3, 3, weight_read);
+    screen.write_float_line(3, 3, weight_read);
     delay(1500);
   }
 
   lcd_PROGMEM_to_buffer(9);
-  lcd_write_text_line(0, 2, buffer);
+  screen.write_text_line(0, 2, buffer);
   // Find perfect minimum
   while (!found_min_perfect)
   {
@@ -817,14 +808,14 @@ void spring_measurement()
     noInterrupts();
     weight_read = scale.get_units();
     interrupts();
-    lcd_write_float_line(3, 3, weight_read);
+    screen.write_float_line(3, 3, weight_read);
     delay(2500);
   }
 
-  lcd.clear();
-  lcd_write_text_line(0, 1, "Nullpunkt funnet");
+  screen.clear();
+  screen.write_text_line(0, 1, "Nullpunkt funnet");
   lcd_PROGMEM_to_buffer(3);
-  lcd_write_text_line(0, 3, buffer);
+  screen.write_text_line(0, 3, buffer);
   button_block_until_OK();
 
   noInterrupts();
@@ -837,11 +828,11 @@ void spring_measurement()
   bool found_max = false;
   int i = 0;
 
-  lcd.clear();
-  lcd_write_text_line(0, 0, "Maks vekt:");
-  lcd_write_float_line(3, 1, max_kg);
+  screen.clear();
+  screen.write_text_line(0, 0, "Maks vekt:");
+  screen.write_float_line(3, 1, max_kg);
   lcd_PROGMEM_to_buffer(10);
-  lcd_write_text_line(0, 2, buffer);
+  screen.write_text_line(0, 2, buffer);
   while (!found_max)
   {
     // Safety, override motor
@@ -864,7 +855,7 @@ void spring_measurement()
       x += step_per_check;
       const_k[i] = (weight_read * CONST_g) / x;
 
-      lcd_write_float_float_line(3, weight_read, const_k[i]);
+      screen.write_float_float_line(3, weight_read, const_k[i]);
       Serial.print("x: ");
       Serial.println(x);
       Serial.print("weight_read: ");
@@ -884,7 +875,7 @@ void spring_measurement()
     delay(2000);
   }
 
-  lcd.clear();
+  screen.clear();
 
   float spring_const, spring_const_avg, spring_const_tot;
   for (int index = 0; index < i; index++)
@@ -903,19 +894,19 @@ void spring_measurement()
   Serial.println(spring_const_avg);
 
   lcd_PROGMEM_to_buffer(7);
-  lcd_write_text_line(0, 0, buffer);
-  lcd_write_float_line(3, 1, spring_const_avg);
+  screen.write_text_line(0, 0, buffer);
+  screen.write_float_line(3, 1, spring_const_avg);
   lcd_PROGMEM_to_buffer(8);
-  lcd_write_text_line(0, 2, buffer);
+  screen.write_text_line(0, 2, buffer);
   lcd_PROGMEM_to_buffer(3);
-  lcd_write_text_line(0, 3, buffer);
+  screen.write_text_line(0, 3, buffer);
   button_block_until_OK();
 
   /* Spring measurement part 3
      Spring measured
      Releasing spring */
   bool finished_release = false;
-  lcd.clear();
+  screen.clear();
   while (!finished_release)
   {
     // Safety, override motor
@@ -937,7 +928,7 @@ void spring_measurement()
       noInterrupts();
       weight_read = scale.get_units();
       interrupts();
-      lcd_write_float_line(3, 3, weight_read);
+      screen.write_float_line(3, 3, weight_read);
     }
     else
     {
@@ -1119,8 +1110,7 @@ void setup()
   Timer1.initialize(1000);
   Timer1.attachInterrupt(timerIsr);
 
-  // set up the LCD's number of rows and columns:
-  lcd.begin(20, 3);
+
 
   // Encoder
   encoder_up = new ClickEncoder(ENC_1A, ENC_1D);
