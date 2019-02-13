@@ -1,9 +1,6 @@
 #include "declarations.h"
 
 // Pointer to stepper class member function
-// void (stepper::*up10) (void) = &stepper::drive_up_10mm;
-// void (stepper::*dn10) (void) = &stepper::drive_down_10mm;
-// void (stepper::*pwr) (void) = &stepper::poweron;
 void up10() { motor.drive_up_10mm(); };
 void dn10() { motor.drive_down_10mm(); };
 void pwr() { motor.poweron(); };
@@ -53,9 +50,6 @@ MyRenderer my_renderer;
 
 void spring_measurement();
 void load_cell_calibration();
-// void motor_drive_down_10mm();
-// void motor_drive_up_10mm();
-// void motor_poweron();
 void lcd_print_force();
 
 MenuSystem ms(my_renderer);
@@ -196,6 +190,7 @@ void load_cell_calibration()
   float calibration_factor[4];
   float calibration_avg;
 
+  // 
   screen.clear();
   lcd_PROGMEM_to_buffer(5);
   screen.write_text_line(0, 1, buffer);
