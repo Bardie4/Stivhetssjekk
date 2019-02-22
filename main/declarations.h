@@ -46,13 +46,6 @@ char buffer[21];
 #define ENC_2A 15
 #define ENC_2D 2
 
-// #define LCD_1 12
-// #define LCD_2 13
-// #define LCD_3 11
-
-// #define MM_TO_PULSE 80UL;
-// #define TENTH_MM_TO_PULSE 8UL;
-
 char inChar;
 
 // Screen ###########################
@@ -103,3 +96,76 @@ const String format_float(const float value);
 const String format_int(const float value);
 void lcd_PROGMEM_to_buffer(int index);
 void load_cell_tare();
+void spring_measurement();
+void load_cell_calibration();
+void lcd_print_force();
+void lcd_print_spring_const();
+
+// Pointer to stepper class member function
+void up10() { motor.drive_up_10mm(); };
+void dn10() { motor.drive_down_10mm(); };
+void pwr() { motor.poweron(); };
+
+// Menu render class
+class MyRenderer : public MenuComponentRenderer
+{
+public:
+  void render(Menu const &menu) const
+  {
+    screen.draw_render(menu.get_name());
+    menu.get_current_component()->render(*this);
+  }
+
+  void render_menu_item(MenuItem const &menu_item) const
+  {
+    lcd_PROGMEM_to_buffer(0);
+    screen.draw_render_menu_item(buffer, menu_item.get_name());
+  }
+
+  void render_back_menu_item(BackMenuItem const &menu_item) const
+  {
+    screen.print(menu_item.get_name());
+  }
+
+  void render_numeric_menu_item(NumericMenuItem const &menu_item) const
+  {
+    screen.draw_render_numeric_menu_item(menu_item.get_name(), menu_item.get_value());
+    if (!menu_item.has_focus())
+    {
+      lcd_PROGMEM_to_buffer(0);
+      screen.print(buffer);
+    }
+    else
+    {
+      lcd_PROGMEM_to_buffer(1);
+      screen.print(buffer);
+    }
+  }
+
+  void render_menu(Menu const &menu) const
+  {
+    lcd_PROGMEM_to_buffer(2);
+    screen.draw_render_menu(menu.get_name(), buffer);
+  }
+};
+
+// Menu renderer instance, set up as tree structure
+MyRenderer my_renderer;
+
+MenuSystem ms(my_renderer);
+Menu menu1("      Kalibrer     >");
+NumericMenuItem menu1_1("     Vekt#1 [kg]  >", nullptr, '1', 0.685, .100, 1.000, 0.10, format_float);
+NumericMenuItem menu1_2(" <   Vekt#2 [kg]  >", nullptr, '2', 1.960, 1.500, 2.500, 0.10, format_float);
+NumericMenuItem menu1_3(" <   Vekt#3 [kg]  >", nullptr, '3', 5.369, 4.500, 5.500, 0.10, format_float);
+MenuItem menu1_4(" <     START", &load_cell_calibration);
+Menu menu2("<  Stivhetssjekk   >");
+NumericMenuItem menu2_1("   Min. kraft [kg]>", nullptr, '^', 0.0, 0.0, 5.0, 0.1, format_float);
+NumericMenuItem menu2_2(" < Maks kraft [kg]>", nullptr, 'v', 0.1, 1.0, 5.0, 0.1, format_float);
+NumericMenuItem menu2_3(" < steg/sjekk [mm]>", nullptr, 's', 1, 1, 10, 1, format_int);
+MenuItem menu2_4(" <     START", &spring_measurement); // Start_measurement
+Menu menu3("<  Manuell styring");
+MenuItem menu3_1("   Motor opp 10mm >", &up10);
+MenuItem menu3_2(" < Motor ned 10mm >", &dn10);
+MenuItem menu3_3(" < Sett 0pkt last >", &load_cell_tare);
+MenuItem menu3_4(" <  Aktiver motor", &pwr);
+NumericMenuItem menu3_5(" <      Kraft     >", &lcd_print_spring_const, 'f', 1, 1, 30, 1, format_int);

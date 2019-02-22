@@ -1,75 +1,5 @@
 #include "declarations.h"
 
-// Pointer to stepper class member function
-void up10() { motor.drive_up_10mm(); };
-void dn10() { motor.drive_down_10mm(); };
-void pwr() { motor.poweron(); };
-
-class MyRenderer : public MenuComponentRenderer
-{
-public:
-  void render(Menu const &menu) const
-  {
-    screen.draw_render(menu.get_name());
-    menu.get_current_component()->render(*this);
-  }
-
-  void render_menu_item(MenuItem const &menu_item) const
-  {
-    lcd_PROGMEM_to_buffer(0);
-    screen.draw_render_menu_item(buffer, menu_item.get_name());
-  }
-
-  void render_back_menu_item(BackMenuItem const &menu_item) const
-  {
-    screen.print(menu_item.get_name());
-  }
-
-  void render_numeric_menu_item(NumericMenuItem const &menu_item) const
-  {
-    screen.draw_render_numeric_menu_item(menu_item.get_name(), menu_item.get_value());
-    if (!menu_item.has_focus())
-    {
-      lcd_PROGMEM_to_buffer(0);
-      screen.print(buffer);
-    }
-    else
-    {
-      lcd_PROGMEM_to_buffer(1);
-      screen.print(buffer);
-    }
-  }
-
-  void render_menu(Menu const &menu) const
-  {
-    lcd_PROGMEM_to_buffer(2);
-    screen.draw_render_menu(menu.get_name(), buffer);
-  }
-};
-MyRenderer my_renderer;
-
-void spring_measurement();
-void load_cell_calibration();
-void lcd_print_force();
-
-MenuSystem ms(my_renderer);
-Menu menu1("      Kalibrer     >");
-NumericMenuItem menu1_1("     Vekt#1 [kg]  >", nullptr, '1', 0.685, .100, 1.000, 0.10, format_float);
-NumericMenuItem menu1_2(" <   Vekt#2 [kg]  >", nullptr, '2', 1.960, 1.500, 2.500, 0.10, format_float);
-NumericMenuItem menu1_3(" <   Vekt#3 [kg]  >", nullptr, '3', 5.369, 4.500, 5.500, 0.10, format_float);
-MenuItem menu1_4(" <     START", &load_cell_calibration);
-Menu menu2("<  Stivhetssjekk   >");
-NumericMenuItem menu2_1("   Min. kraft [kg]>", nullptr, '^', 0.0, 0.0, 5.0, 0.1, format_float);
-NumericMenuItem menu2_2(" < Maks kraft [kg]>", nullptr, 'v', 0.1, 1.0, 5.0, 0.1, format_float);
-NumericMenuItem menu2_3(" < steg/sjekk [mm]>", nullptr, 's', 1, 1, 10, 1, format_int);
-MenuItem menu2_4(" <     START", &spring_measurement); // Start_measurement
-Menu menu3("<  Manuell styring");
-MenuItem menu3_1("   Motor opp 10mm >", &up10);
-MenuItem menu3_2(" < Motor ned 10mm >", &dn10);
-MenuItem menu3_3(" < Sett 0pkt last >", &load_cell_tare);
-MenuItem menu3_4(" <  Aktiver motor", &pwr);
-NumericMenuItem menu3_5(" <      Kraft     >", &lcd_print_spring_const, 'f', 1, 1, 30, 1, format_int);
-
 // BUTTONS ###############################
 bool button_get(int BTN, btn_t *btn)
 {
@@ -102,25 +32,10 @@ void button_block_until_OK()
 void encoder_get(ClickEncoder *encoder, enc_t *enc)
 {
   enc->value += encoder->getValue();
-  // if (enc->value < 0)
-  // {
-  //   if (enc->position > 20)
-  //   {
-  //     enc->position -= 20;
-  //   }
-  //   enc->position = (20 - abs(enc->value) % 20) % 20;
-  // }
-  // else
-  // {
-  //   enc->position = abs(enc->value) % 20;
-  // }
 
   // Encoder sensitivity
   if (enc->value != enc->last)
   {
-    // Enkoder saturation
-    //if(enc->value>100){enc->value=100;};
-    //if(enc->value<0){enc->value=0;};
 
     if (enc->value > enc->last)
     {
@@ -311,22 +226,6 @@ float spring_const_to_EEPROM(float x, float weight_read, int addr)
   k = (weight_read * CONST_g) / (x);
   EEPROM.write(addr, k);
   return k;
-
-  // if (k < 0.0)
-  // {
-  //   EEPROM.write(addr, 0.0);
-  //   return 0;
-  // }
-  // else if (k > 1000.0)
-  // {
-  //   EEPROM.write(addr, 1000.0);
-  //   return 1000;
-  // }
-  // else
-  // {
-  //   EEPROM.write(addr, k);
-  //   return k;
-  // }
 }
 
 void spring_measurement()
@@ -600,19 +499,19 @@ void spring_measurement_quit()
 // MISC. #################################
 const String format_int(const float value)
 {
-  // writes the (int) value of a float into a char buffer.
+  // float -> int -> char buffer
   return String((int)value);
 }
 
 const String format_float(const float value)
 {
-  // writes the value of a float into a char buffer.
+  // float -> char buffer
   return String(value);
 }
 
 void copy_to_dst(float *src, float *dst, int len)
 {
-  // Function to copy 'len' elements from 'src' to 'dst'
+  // copy 'len' elements from 'src' to 'dst'
   memcpy(dst, src, sizeof(src[0]) * len);
 }
 
