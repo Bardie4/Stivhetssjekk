@@ -1,0 +1,97 @@
+[
+  {
+    "Sourcefile": "",
+    "Include": "",
+    "Includepath": "D:\\Programmer\\Arduino\\hardware\\arduino\\avr\\cores\\arduino"
+  },
+  {
+    "Sourcefile": "",
+    "Include": "",
+    "Includepath": "D:\\Programmer\\Arduino\\hardware\\arduino\\avr\\variants\\standard"
+  },
+  {
+    "Sourcefile": "d:\\Dokumenter\\Stivhetssjekk\\ArduinoOutput\\sketch\\main.ino.cpp",
+    "Include": "Wire.h",
+    "Includepath": "D:\\Programmer\\Arduino\\hardware\\arduino\\avr\\libraries\\Wire\\src"
+  },
+  {
+    "Sourcefile": "d:\\Dokumenter\\Stivhetssjekk\\ArduinoOutput\\sketch\\main.ino.cpp",
+    "Include": "Adafruit_LiquidCrystal.h",
+    "Includepath": "C:\\Users\\alber\\Documents\\Arduino\\libraries\\Adafruit_LiquidCrystal"
+  },
+  {
+    "Sourcefile": "d:\\Dokumenter\\Stivhetssjekk\\ArduinoOutput\\sketch\\main.ino.cpp",
+    "Include": "ClickEncoder.h",
+    "Includepath": "C:\\Users\\alber\\Documents\\Arduino\\libraries\\ClickEncoder"
+  },
+  {
+    "Sourcefile": "d:\\Dokumenter\\Stivhetssjekk\\ArduinoOutput\\sketch\\main.ino.cpp",
+    "Include": "TimerOne.h",
+    "Includepath": "C:\\Users\\alber\\Documents\\Arduino\\libraries\\TimerOne"
+  },
+  {
+    "Sourcefile": "d:\\Dokumenter\\Stivhetssjekk\\ArduinoOutput\\sketch\\main.ino.cpp",
+    "Include": "HX711.h",
+    "Includepath": "C:\\Users\\alber\\Documents\\Arduino\\libraries\\HX711"
+  },
+  {
+    "Sourcefile": "d:\\Dokumenter\\Stivhetssjekk\\ArduinoOutput\\sketch\\main.ino.cpp",
+    "Include": "EEPROM.h",
+    "Includepath": "D:\\Programmer\\Arduino\\hardware\\arduino\\avr\\libraries\\EEPROM\\src"
+  },
+  {
+    "Sourcefile": "d:\\Dokumenter\\Stivhetssjekk\\ArduinoOutput\\sketch\\main.ino.cpp",
+    "Include": "",
+    "Includepath": ""
+  },
+  {
+    "Sourcefile": "d:\\Dokumenter\\Stivhetssjekk\\ArduinoOutput\\sketch\\LCD.cpp",
+    "Include": "",
+    "Includepath": ""
+  },
+  {
+    "Sourcefile": "d:\\Dokumenter\\Stivhetssjekk\\ArduinoOutput\\sketch\\MenuSystem.cpp",
+    "Include": "",
+    "Includepath": ""
+  },
+  {
+    "Sourcefile": "d:\\Dokumenter\\Stivhetssjekk\\ArduinoOutput\\sketch\\stepper.cpp",
+    "Include": "",
+    "Includepath": ""
+  },
+  {
+    "Sourcefile": "D:\\Programmer\\Arduino\\hardware\\arduino\\avr\\libraries\\Wire\\src\\Wire.cpp",
+    "Include": "",
+    "Includepath": ""
+  },
+  {
+    "Sourcefile": "D:\\Programmer\\Arduino\\hardware\\arduino\\avr\\libraries\\Wire\\src\\utility\\twi.c",
+    "Include": "",
+    "Includepath": ""
+  },
+  {
+    "Sourcefile": "C:\\Users\\alber\\Documents\\Arduino\\libraries\\Adafruit_LiquidCrystal\\Adafruit_LiquidCrystal.cpp",
+    "Include": "",
+    "Includepath": ""
+  },
+  {
+    "Sourcefile": "C:\\Users\\alber\\Documents\\Arduino\\libraries\\Adafruit_LiquidCrystal\\utility\\Adafruit_MCP23008.cpp",
+    "Include": "",
+    "Includepath": ""
+  },
+  {
+    "Sourcefile": "C:\\Users\\alber\\Documents\\Arduino\\libraries\\ClickEncoder\\ClickEncoder.cpp",
+    "Include": "",
+    "Includepath": ""
+  },
+  {
+    "Sourcefile": "C:\\Users\\alber\\Documents\\Arduino\\libraries\\TimerOne\\TimerOne.cpp",
+    "Include": "",
+    "Includepath": ""
+  },
+  {
+    "Sourcefile": "C:\\Users\\alber\\Documents\\Arduino\\libraries\\HX711\\HX711.cpp",
+    "Include": "",
+    "Includepath": ""
+  }
+]

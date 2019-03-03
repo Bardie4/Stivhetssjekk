@@ -14,10 +14,10 @@
 #include "LCD.h"
 #include "stepper.h"
 
-const char string_0[] PROGMEM = "|TB|          |OK|"; // "String 0" etc are strings to store
-const char string_1[] PROGMEM = "                |OK|";
-const char string_2[] PROGMEM = "                |OK|";
-const char string_3[] PROGMEM = " ";
+const char string_0[] PROGMEM = "<-:|Tilb.| Velg:|OK|"; // "String 0" etc are strings to store
+const char string_1[] PROGMEM = "        Bekreft:|OK|";
+const char string_2[] PROGMEM = "           Velg:|OK|";
+const char string_3[] PROGMEM = "         Videre:|OK|";
 const char string_4[] PROGMEM = "                    ";
 const char string_5[] PROGMEM = "La vekten henge tom";
 const char string_6[] PROGMEM = "Plasser vekt #";
@@ -77,7 +77,7 @@ typedef struct
 } btn_t;
 
 int btn_trigdelay;
-const int btn_WAITTIME = 700;
+const int btn_WAITTIME = 500;
 
 btn_t btn_OK, btn_TB, btn_IN;
 

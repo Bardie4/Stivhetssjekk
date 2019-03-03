@@ -1,6 +1,6 @@
 #include "declarations.h"
 
-// Pointer to stepper class member function
+// Pointer to stepper class member functions
 // void (stepper::*up10) (void) = &stepper::drive_up_10mm;
 // void (stepper::*dn10) (void) = &stepper::drive_down_10mm;
 // void (stepper::*pwr) (void) = &stepper::poweron;
@@ -8,6 +8,7 @@ void up10() { motor.drive_up_10mm(); };
 void dn10() { motor.drive_down_10mm(); };
 void pwr() { motor.poweron(); };
 
+// Menu renderer is a global class, do not move
 class MyRenderer : public MenuComponentRenderer
 {
 public:
@@ -20,13 +21,10 @@ public:
   void render_menu_item(MenuItem const &menu_item) const
   {
     lcd_PROGMEM_to_buffer(0);
-    screen.draw_render_menu_item(buffer, menu_item.get_name());
+    screen.draw_render_menu_item(menu_item.get_name(), buffer);
   }
 
-  void render_back_menu_item(BackMenuItem const &menu_item) const
-  {
-    screen.print(menu_item.get_name());
-  }
+  void render_back_menu_item(BackMenuItem const &menu_item) const { screen.print(menu_item.get_name()); }
 
   void render_numeric_menu_item(NumericMenuItem const &menu_item) const
   {
@@ -45,12 +43,13 @@ public:
 
   void render_menu(Menu const &menu) const
   {
-    lcd_PROGMEM_to_buffer(2);
+    lcd_PROGMEM_to_buffer(1);
     screen.draw_render_menu(menu.get_name(), buffer);
   }
 };
 MyRenderer my_renderer;
 
+// Forward declarations needed by MenuSystem
 void spring_measurement();
 void load_cell_calibration();
 // void motor_drive_down_10mm();
@@ -58,6 +57,8 @@ void load_cell_calibration();
 // void motor_poweron();
 void lcd_print_force();
 
+// Menu system which handles displayed text, call to functions via pointers, and
+// numeric items (default, min, max, increment)
 MenuSystem ms(my_renderer);
 Menu menu1("      Kalibrer     >");
 NumericMenuItem menu1_1("     Vekt#1 [kg]  >", nullptr, '1', 0.685, .100, 1.000, 0.10, format_float);
@@ -73,8 +74,8 @@ Menu menu3("<  Manuell styring");
 MenuItem menu3_1("   Motor opp 10mm >", &up10);
 MenuItem menu3_2(" < Motor ned 10mm >", &dn10);
 MenuItem menu3_3(" < Sett 0pkt last >", &load_cell_tare);
-MenuItem menu3_4(" <  Aktiver motor", &pwr);
-NumericMenuItem menu3_5(" <      Kraft     >", &lcd_print_spring_const, 'f', 1, 1, 30, 1, format_int);
+MenuItem menu3_4(" <  Aktiver motor >", &pwr);
+NumericMenuItem menu3_5(" <      Kraft", &lcd_print_spring_const, 'f', 1, 1, 30, 1, format_int);
 
 // BUTTONS ###############################
 bool button_get(int BTN, btn_t *btn)
@@ -95,7 +96,6 @@ bool button_get(int BTN, btn_t *btn)
 
 void button_block_until_OK()
 {
-
   btn_OK.trig = false;
   while (!btn_OK.trig)
   {
@@ -124,9 +124,9 @@ void encoder_get(ClickEncoder *encoder, enc_t *enc)
   // Encoder sensitivity
   if (enc->value != enc->last)
   {
-    // Enkoder saturation
-    //if(enc->value>100){enc->value=100;};
-    //if(enc->value<0){enc->value=0;};
+    // Encoder saturation
+    // if(enc->value>100){enc->value=100;};
+    // if(enc->value<0){enc->value=0;};
 
     if (enc->value > enc->last)
     {
@@ -151,16 +151,13 @@ void lcd_print_spring_const()
   delay(2000);
 }
 
-void lcd_PROGMEM_to_buffer(int index)
-{
-  strcpy_P(buffer, (char *)pgm_read_word(&(string_table[index])));
-}
+void lcd_PROGMEM_to_buffer(int index) { strcpy_P(buffer, (char *)pgm_read_word(&(string_table[index]))); }
 
 // LOAD CELL #############################
 void load_cell_init()
 {
   scale.set_scale();
-  scale.tare(); //Reset the scale to 0
+  scale.tare(); // Reset the scale to 0
 
   long zero_factor = scale.read_average();
   scale.set_scale(load_cell.calibration_factor);
@@ -173,17 +170,14 @@ void load_cell_get()
     load_cell.value = scale.get_units();
     load_cell.reading = 0;
     load_cell.update = true;
-    //serial.println(load_cell.value, 3);
   }
 }
 
-void load_cell_tare()
-{
-  scale.tare();
-}
+void load_cell_tare() { scale.tare(); }
 
 void load_cell_calibration()
 {
+  // Fetch weight values declared in menu
   float weight[5];
   weight[0] = 0.0;
   weight[1] = menu1_1.get_value();
@@ -191,29 +185,30 @@ void load_cell_calibration()
   weight[3] = menu1_3.get_value();
 
   float weight_read, weight_read_prev;
-
   float calibration_temp, calibration_temp_prev;
   float calibration_factor[4];
-  float calibration_avg;
+  float calibration_avg = 0;
 
+  // La vekten henge tom
+  // Videre |OK|
   screen.clear();
   lcd_PROGMEM_to_buffer(5);
   screen.write_text_line(0, 1, buffer);
-
-  lcd_PROGMEM_to_buffer(3);
+  lcd_PROGMEM_to_buffer(1);
   screen.write_text_line(0, 3, buffer);
-  button_block_until_OK();
+  button_block_until_OK(); // wait for OK
+
+  // Plasser vekt #
   screen.clear();
   lcd_PROGMEM_to_buffer(6);
   screen.write_text_line(0, 1, buffer);
 
-  // Call set_scale() with no parameter.
+  // Call set_scale() with no parameter, Call tare() with no parameter, no
+  // interrupts
   noInterrupts();
   scale.set_scale();
-  // Call tare() with no parameter.
   scale.tare();
   interrupts();
-  // Place a known weight on the scale and call get_units(10).
 
   calibration_temp = load_cell.calibration_factor;
   calibration_factor[0] = calibration_temp;
@@ -221,17 +216,21 @@ void load_cell_calibration()
 
   for (int i = 1; i <= 3; i++)
   {
-
+    // PLasser vekt # i |OK|
     screen.clear();
     lcd_PROGMEM_to_buffer(6);
     screen.write_text_int_line(0, 1, buffer, i);
-
-    lcd_PROGMEM_to_buffer(3);
+    lcd_PROGMEM_to_buffer(1);
     screen.write_text_line(0, 3, buffer);
     button_block_until_OK();
 
+    // Vekt: ###
+    // Avlest | Kal.fak
+    //  ###       ###
     screen.write_text_float_line(0, 0, "Vekt: ", weight[i]);
     screen.write_text_line(0, 1, "Avlest   |   Kal.fak");
+    lcd_PROGMEM_to_buffer(2);
+    screen.write_text_line(0, 3, buffer);
 
     noInterrupts();
     weight_read = scale.get_units();
@@ -243,60 +242,123 @@ void load_cell_calibration()
     {
       noInterrupts();
       scale.set_scale(calibration_temp);
-      weight_read = scale.get_units();
+      weight_read = scale.get_units(5); // average read
       interrupts();
 
-      if (weight_read >= (weight_read_prev + 0.01) || weight_read <= (weight_read_prev - 0.01) || calibration_temp != calibration_temp_prev)
+      // Display on screen if value has changed
+      if (weight_read >= (weight_read_prev + 0.01) || weight_read <= (weight_read_prev - 0.01) ||
+          calibration_temp != calibration_temp_prev)
       {
         screen.write_float_float_line(2, weight_read, calibration_temp);
       }
       weight_read_prev = weight_read;
       calibration_temp_prev = calibration_temp;
 
-      if (enc_up.clockwise < -1)
+      if (weight_read > (weight[i] + 0.0001))
       {
-        calibration_temp -= 1000;
-        enc_up.clockwise = 0;
+        /*         if (weight_read > (weight[i] + 0.1))
+        {
+          calibration_temp += 10000.0;
+        }
+        else */
+        if (weight_read > (weight[i] + 0.3))
+        {
+          calibration_temp += 300.0;
+        }
+        else if (weight_read > (weight[i] + 0.01))
+        {
+          calibration_temp += 200.0;
+        }
+        else if (weight_read > (weight[i] + 0.05))
+        {
+          calibration_temp += 100.0;
+        }
+        else
+        {
+          calibration_temp += 1.0;
+        }
       }
-      if (enc_up.clockwise > 1)
+      else if (weight_read < (weight[i] - 0.0001))
       {
-        calibration_temp += 1000;
-        enc_up.clockwise = 0;
-      }
-      if (enc_dn.clockwise < -1)
-      {
-        calibration_temp -= 10;
-        enc_dn.clockwise = 0;
-      }
-      if (enc_dn.clockwise > 1)
-      {
-        calibration_temp += 10;
-        enc_dn.clockwise = 0;
+        /*         if (weight_read < (weight[i] - 0.1))
+        {
+          calibration_temp -= 10000.0;
+        }
+        else  */
+        if (weight_read < (weight[i] - 0.3))
+        {
+          calibration_temp -= 300.0;
+        }
+        else if (weight_read < (weight[i] - 0.01))
+        {
+          calibration_temp -= 200.0;
+        }
+        else if (weight_read < (weight[i] - 0.05))
+        {
+          calibration_temp -= 100.0;
+        }
+        else
+        {
+          calibration_temp -= 1.0;
+        }
       }
 
+      // if (enc_up.clockwise < -1)
+      // {
+      //   calibration_temp -= 1000;
+      //   enc_up.clockwise = 0;
+      // }
+      // if (enc_up.clockwise > 1)
+      // {
+      //   calibration_temp += 1000;
+      //   enc_up.clockwise = 0;
+      // }
+      // if (enc_dn.clockwise < -1)
+      // {
+      //   calibration_temp -= 10;
+      //   enc_dn.clockwise = 0;
+      // }
+      // if (enc_dn.clockwise > 1)
+      // {
+      //   calibration_temp += 10;
+      //   enc_dn.clockwise = 0;
+      // }
+
+      if (calibration_temp < 0)
+      {
+        calibration_temp = load_cell.calibration_factor;
+      }
+
+      button_get(BTN_TB, &btn_TB);
       button_get(BTN_OK, &btn_OK);
     }
 
     screen.clear();
 
+    // Kal.faktor ###
+    // Vekt: ###
+    // |OK|
     screen.write_text_float_line(0, 1, "Kal. faktor: ", calibration_temp);
     screen.write_text_float_line(0, 2, "Vekt: ", weight_read);
-    lcd_PROGMEM_to_buffer(3);
+    lcd_PROGMEM_to_buffer(1);
     screen.write_text_line(0, 3, buffer);
     calibration_factor[i] = calibration_temp;
     button_block_until_OK();
   }
 
+  // Find average
   for (int j = 0; j <= 3; j++)
   {
-    calibration_temp += (calibration_factor[j]);
+    calibration_avg += (calibration_factor[j]) / 4.0;
   }
-  calibration_temp /= 4;
 
+  // Kalibrering ferdig
+  // Kal. faktor: ###
+  // |OK|
   screen.clear();
   screen.write_text_line(0, 0, "Kalibrering ferdig ");
   screen.write_text_float_line(0, 1, "Kal. faktor: ", calibration_temp);
-  lcd_PROGMEM_to_buffer(3);
+  lcd_PROGMEM_to_buffer(1);
   screen.write_text_line(0, 3, buffer);
   button_block_until_OK();
 
@@ -316,22 +378,6 @@ float spring_const_to_EEPROM(float x, float weight_read, int addr)
   k = (weight_read * CONST_g) / (x);
   EEPROM.write(addr, k);
   return k;
-
-  // if (k < 0.0)
-  // {
-  //   EEPROM.write(addr, 0.0);
-  //   return 0;
-  // }
-  // else if (k > 1000.0)
-  // {
-  //   EEPROM.write(addr, 1000.0);
-  //   return 1000;
-  // }
-  // else
-  // {
-  //   EEPROM.write(addr, k);
-  //   return k;
-  // }
 }
 
 void spring_measurement()
@@ -343,9 +389,10 @@ void spring_measurement()
   float const_k[64];
 
   // Spring must be attached and hanging loosely
+  // Starter test |OK|
   screen.clear();
   screen.write_text_line(0, 1, "Starter test");
-  lcd_PROGMEM_to_buffer(3);
+  lcd_PROGMEM_to_buffer(1);
   screen.write_text_line(0, 3, buffer);
   button_block_until_OK();
 
@@ -356,10 +403,12 @@ void spring_measurement()
   interrupts();
 
   /*Spring measurement part 1
-    Drive motor to minimum and set zero-point */
+    Drive motor to minimum and set zero-point
+                                              */
 
   bool found_min_close = false, found_min_closer = false, found_min_perfect = false;
   // Get close to minimum
+  //
   screen.clear();
   screen.write_text_line(0, 0, "0-pkt:");
   screen.write_float_line(3, 1, min_kg);
@@ -471,7 +520,7 @@ void spring_measurement()
 
   screen.clear();
   screen.write_text_line(0, 1, "Nullpunkt funnet");
-  lcd_PROGMEM_to_buffer(3);
+  lcd_PROGMEM_to_buffer(1);
   screen.write_text_line(0, 3, buffer);
   button_block_until_OK();
 
@@ -479,8 +528,8 @@ void spring_measurement()
   scale.tare();
   interrupts();
 
-  /*Spring measurement part 2 
-    Calculate spring constants 
+  /*Spring measurement part 2
+    Calculate spring constants
     k = F/x                  */
   bool found_max = false;
   int i = 0;
@@ -546,7 +595,7 @@ void spring_measurement()
     Serial.print(" : ");
     Serial.println(const_k[index]);
   }
-  //spring_const_avg = spring_const_tot / i;
+  // spring_const_avg = spring_const_tot / i;
   Serial.print("spring_const_avg: ");
   Serial.println(spring_const_avg);
 
@@ -555,7 +604,7 @@ void spring_measurement()
   screen.write_float_line(3, 1, spring_const_avg);
   lcd_PROGMEM_to_buffer(8);
   screen.write_text_line(0, 2, buffer);
-  lcd_PROGMEM_to_buffer(3);
+  lcd_PROGMEM_to_buffer(1);
   screen.write_text_line(0, 3, buffer);
   button_block_until_OK();
 
@@ -763,7 +812,7 @@ void setup()
 {
   Serial.begin(9600);
 
-  Timer1.initialize(1000);
+  Timer1.initialize(500);
   Timer1.attachInterrupt(timerIsr);
 
   // Encoder

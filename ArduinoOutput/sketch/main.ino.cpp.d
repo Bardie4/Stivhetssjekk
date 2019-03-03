@@ -1,0 +1,27 @@
+d:\Dokumenter\Stivhetssjekk\ArduinoOutput\sketch\main.ino.cpp.o: \
+ d:\Dokumenter\Stivhetssjekk\ArduinoOutput\sketch\main.ino.cpp \
+ D:\Programmer\Arduino\hardware\arduino\avr\cores\arduino/Arduino.h \
+ D:\Programmer\Arduino\hardware\arduino\avr\cores\arduino/binary.h \
+ D:\Programmer\Arduino\hardware\arduino\avr\cores\arduino/WCharacter.h \
+ D:\Programmer\Arduino\hardware\arduino\avr\cores\arduino/WString.h \
+ D:\Programmer\Arduino\hardware\arduino\avr\cores\arduino/HardwareSerial.h \
+ D:\Programmer\Arduino\hardware\arduino\avr\cores\arduino/Stream.h \
+ D:\Programmer\Arduino\hardware\arduino\avr\cores\arduino/Print.h \
+ D:\Programmer\Arduino\hardware\arduino\avr\cores\arduino/Printable.h \
+ D:\Programmer\Arduino\hardware\arduino\avr\cores\arduino/USBAPI.h \
+ D:\Programmer\Arduino\hardware\arduino\avr\cores\arduino/Arduino.h \
+ D:\Programmer\Arduino\hardware\arduino\avr\variants\standard/pins_arduino.h \
+ d:\Dokumenter\Stivhetssjekk\ArduinoOutput\sketch\declarations.h \
+ D:\Programmer\Arduino\hardware\arduino\avr\libraries\Wire\src/Wire.h \
+ D:\Programmer\Arduino\hardware\arduino\avr\cores\arduino/Stream.h \
+ C:\Users\alber\Documents\Arduino\libraries\Adafruit_LiquidCrystal/Adafruit_LiquidCrystal.h \
+ D:\Programmer\Arduino\hardware\arduino\avr\cores\arduino/Print.h \
+ C:\Users\alber\Documents\Arduino\libraries\Adafruit_LiquidCrystal/utility/Adafruit_MCP23008.h \
+ C:\Users\alber\Documents\Arduino\libraries\ClickEncoder/ClickEncoder.h \
+ C:\Users\alber\Documents\Arduino\libraries\TimerOne/TimerOne.h \
+ C:\Users\alber\Documents\Arduino\libraries\TimerOne/config/known_16bit_timers.h \
+ C:\Users\alber\Documents\Arduino\libraries\HX711/HX711.h \
+ d:\Dokumenter\Stivhetssjekk\ArduinoOutput\sketch\MenuSystem.h \
+ D:\Programmer\Arduino\hardware\arduino\avr\libraries\EEPROM\src/EEPROM.h \
+ d:\Dokumenter\Stivhetssjekk\ArduinoOutput\sketch\LCD.h \
+ d:\Dokumenter\Stivhetssjekk\ArduinoOutput\sketch\stepper.h
