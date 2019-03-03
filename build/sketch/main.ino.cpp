@@ -7,53 +7,6 @@
 // void (stepper::*up10) (void) = &stepper::drive_up_10mm;
 // void (stepper::*dn10) (void) = &stepper::drive_down_10mm;
 // void (stepper::*pwr) (void) = &stepper::poweron;
-#line 7 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
-void up10();
-#line 8 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
-void dn10();
-#line 9 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
-void pwr();
-#line 81 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
-bool button_get(int BTN, btn_t *btn);
-#line 97 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
-void button_block_until_OK();
-#line 108 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
-void encoder_get(ClickEncoder *encoder, enc_t *enc);
-#line 146 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
-void lcd_print_spring_const();
-#line 154 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
-void lcd_PROGMEM_to_buffer(int index);
-#line 157 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
-void load_cell_init();
-#line 166 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
-void load_cell_get();
-#line 176 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
-void load_cell_tare();
-#line 374 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
-float spring_const_to_EEPROM(float x, float weight_read, int addr);
-#line 648 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
-void spring_measurement_quit();
-#line 655 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
-const String format_int(const float value);
-#line 661 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
-const String format_float(const float value);
-#line 667 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
-void copy_to_dst(float *src, float *dst, int len);
-#line 674 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
-void menu_init();
-#line 695 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
-void menu_handler();
-#line 779 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
-void timerIsr();
-#line 811 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
-void setup();
-#line 834 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
-void loop();
-#line 7 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
-void up10() { motor.drive_up_10mm(); };
-void dn10() { motor.drive_down_10mm(); };
-void pwr() { motor.poweron(); };
-
 // Menu renderer is a global class, do not move
 class MyRenderer : public MenuComponentRenderer
 {
@@ -124,6 +77,43 @@ MenuItem menu3_4(" <  Aktiver motor >", &pwr);
 NumericMenuItem menu3_5(" <      Kraft", &lcd_print_spring_const, 'f', 1, 1, 30, 1, format_int);
 
 // BUTTONS ###############################
+#line 77 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+bool button_get(int BTN, btn_t *btn);
+#line 93 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+void button_block_until_OK();
+#line 104 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+void encoder_get(ClickEncoder *encoder, enc_t *enc);
+#line 130 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+void lcd_print_spring_const();
+#line 138 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+void lcd_PROGMEM_to_buffer(int index);
+#line 141 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+void load_cell_init();
+#line 150 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+void load_cell_get();
+#line 160 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+void load_cell_tare();
+#line 359 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+float spring_const_to_EEPROM(float x, float weight_read, int addr);
+#line 635 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+void spring_measurement_quit();
+#line 642 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+const String format_int(const float value);
+#line 648 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+const String format_float(const float value);
+#line 654 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+void copy_to_dst(float *src, float *dst, int len);
+#line 661 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+void menu_init();
+#line 682 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+void menu_handler();
+#line 766 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+void timerIsr();
+#line 798 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+void setup();
+#line 821 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+void loop();
+#line 77 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
 bool button_get(int BTN, btn_t *btn)
 {
   btn->value = digitalRead(BTN);
@@ -154,18 +144,6 @@ void button_block_until_OK()
 void encoder_get(ClickEncoder *encoder, enc_t *enc)
 {
   enc->value += encoder->getValue();
-  // if (enc->value < 0)
-  // {
-  //   if (enc->position > 20)
-  //   {
-  //     enc->position -= 20;
-  //   }
-  //   enc->position = (20 - abs(enc->value) % 20) % 20;
-  // }
-  // else
-  // {
-  //   enc->position = abs(enc->value) % 20;
-  // }
 
   // Encoder sensitivity
   if (enc->value != enc->last)
@@ -412,6 +390,7 @@ void load_cell_calibration()
   scale.set_scale(calibration_avg);
   interrupts();
 
+  // Finished -> Back to menu
   ms.prev();
   ms.display();
 }
@@ -450,11 +429,12 @@ void spring_measurement()
 
   /*Spring measurement part 1
     Drive motor to minimum and set zero-point
-                                              */
+    Three loops that move closer and closer
+  */
 
   bool found_min_close = false, found_min_closer = false, found_min_perfect = false;
   // Get close to minimum
-  //
+
   screen.clear();
   screen.write_text_line(0, 0, "0-pkt:");
   screen.write_float_line(3, 1, min_kg);
@@ -529,6 +509,7 @@ void spring_measurement()
 
   lcd_PROGMEM_to_buffer(9);
   screen.write_text_line(0, 2, buffer);
+
   // Find perfect minimum
   while (!found_min_perfect)
   {
@@ -629,12 +610,12 @@ void spring_measurement()
 
   screen.clear();
 
-  float spring_const, spring_const_avg, spring_const_tot;
+  float spring_const = 0.0f, spring_const_avg = 0.0f, spring_const_tot = 0.0f;
   for (int index = 0; index < i; index++)
   {
-    spring_const_avg = const_k[index] / i;
+    spring_const_avg += const_k[index] / (float)i;
 
-    Serial.print("spring_const_tot: ");
+    Serial.print("spring_const_avg: ");
     Serial.println(spring_const_avg);
     Serial.print("k: ");
     Serial.print(index);
@@ -642,7 +623,7 @@ void spring_measurement()
     Serial.println(const_k[index]);
   }
   // spring_const_avg = spring_const_tot / i;
-  Serial.print("spring_const_avg: ");
+  Serial.print("Final spring const: ");
   Serial.println(spring_const_avg);
 
   lcd_PROGMEM_to_buffer(7);
@@ -700,19 +681,19 @@ void spring_measurement_quit()
 // MISC. #################################
 const String format_int(const float value)
 {
-  // writes the (int) value of a float into a char buffer.
+  // float -> int -> char buffer
   return String((int)value);
 }
 
 const String format_float(const float value)
 {
-  // writes the value of a float into a char buffer.
+  // float -> char buffer
   return String(value);
 }
 
 void copy_to_dst(float *src, float *dst, int len)
 {
-  // Function to copy 'len' elements from 'src' to 'dst'
+  // copy 'len' elements from 'src' to 'dst'
   memcpy(dst, src, sizeof(src[0]) * len);
 }
 

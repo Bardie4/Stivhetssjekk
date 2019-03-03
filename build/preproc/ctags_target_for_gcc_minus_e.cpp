@@ -6,10 +6,6 @@
 // void (stepper::*up10) (void) = &stepper::drive_up_10mm;
 // void (stepper::*dn10) (void) = &stepper::drive_down_10mm;
 // void (stepper::*pwr) (void) = &stepper::poweron;
-void up10() { motor.drive_up_10mm(); };
-void dn10() { motor.drive_down_10mm(); };
-void pwr() { motor.poweron(); };
-
 // Menu renderer is a global class, do not move
 class MyRenderer : public MenuComponentRenderer
 {
@@ -110,18 +106,6 @@ void button_block_until_OK()
 void encoder_get(ClickEncoder *encoder, enc_t *enc)
 {
   enc->value += encoder->getValue();
-  // if (enc->value < 0)
-  // {
-  //   if (enc->position > 20)
-  //   {
-  //     enc->position -= 20;
-  //   }
-  //   enc->position = (20 - abs(enc->value) % 20) % 20;
-  // }
-  // else
-  // {
-  //   enc->position = abs(enc->value) % 20;
-  // }
 
   // Encoder sensitivity
   if (enc->value != enc->last)
@@ -154,13 +138,13 @@ void lcd_print_spring_const()
 }
 
 void lcd_PROGMEM_to_buffer(int index) { strcpy_P(buffer, (char *)
-# 154 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
+# 138 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
                                                                 (__extension__({ uint16_t __addr16 = (uint16_t)((uint16_t)(
-# 154 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 138 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
                                                                 &(string_table[index])
-# 154 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
+# 138 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
                                                                 )); uint16_t __result; __asm__ __volatile__ ( "lpm %A0, Z+" "\n\t" "lpm %B0, Z" "\n\t" : "=r" (__result), "=z" (__addr16) : "1" (__addr16) ); __result; }))
-# 154 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 138 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
                                                                                                      ); }
 
 // LOAD CELL #############################
@@ -216,16 +200,16 @@ void load_cell_calibration()
   // Call set_scale() with no parameter, Call tare() with no parameter, no
   // interrupts
   
-# 208 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
+# 192 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
  __asm__ __volatile__ ("cli" ::: "memory")
-# 208 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 192 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
                ;
   scale.set_scale();
   scale.tare();
   
-# 211 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
+# 195 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
  __asm__ __volatile__ ("sei" ::: "memory")
-# 211 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 195 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
              ;
 
   calibration_temp = load_cell.calibration_factor;
@@ -251,15 +235,15 @@ void load_cell_calibration()
     screen.write_text_line(0, 3, buffer);
 
     
-# 235 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
+# 219 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
    __asm__ __volatile__ ("cli" ::: "memory")
-# 235 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 219 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
                  ;
     weight_read = scale.get_units();
     
-# 237 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
+# 221 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
    __asm__ __volatile__ ("sei" ::: "memory")
-# 237 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 221 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
                ;
     weight_read_prev = weight_read;
     screen.write_float_float_line(2, weight_read, calibration_temp);
@@ -267,16 +251,16 @@ void load_cell_calibration()
     while (!btn_OK.trig)
     {
       
-# 243 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
+# 227 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
      __asm__ __volatile__ ("cli" ::: "memory")
-# 243 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 227 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
                    ;
       scale.set_scale(calibration_temp);
       weight_read = scale.get_units(5); // average read
       
-# 246 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
+# 230 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
      __asm__ __volatile__ ("sei" ::: "memory")
-# 246 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 230 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
                  ;
 
       // Display on screen if value has changed
@@ -299,7 +283,7 @@ void load_cell_calibration()
         }
 
         else */
-# 264 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 248 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
         if (weight_read > (weight[i] + 0.3))
         {
           calibration_temp += 300.0;
@@ -328,7 +312,7 @@ void load_cell_calibration()
         }
 
         else  */
-# 288 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 272 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
         if (weight_read < (weight[i] - 0.3))
         {
           calibration_temp -= 300.0;
@@ -407,17 +391,18 @@ void load_cell_calibration()
   button_block_until_OK();
 
   
-# 365 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
+# 349 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
  __asm__ __volatile__ ("cli" ::: "memory")
-# 365 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 349 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
                ;
   scale.set_scale(calibration_avg);
   
-# 367 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
+# 351 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
  __asm__ __volatile__ ("sei" ::: "memory")
-# 367 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 351 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
              ;
 
+  // Finished -> Back to menu
   ms.prev();
   ms.display();
 }
@@ -449,28 +434,30 @@ void spring_measurement()
   button_block_until_OK();
 
   
-# 399 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
+# 384 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
  __asm__ __volatile__ ("cli" ::: "memory")
-# 399 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 384 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
                ;
   scale.set_scale();
   scale.tare();
   scale.set_scale(load_cell.calibration_factor);
   
-# 403 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
+# 388 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
  __asm__ __volatile__ ("sei" ::: "memory")
-# 403 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 388 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
              ;
 
   /*Spring measurement part 1
 
     Drive motor to minimum and set zero-point
 
-                                              */
-# 409 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+    Three loops that move closer and closer
+
+  */
+# 395 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
   bool found_min_close = false, found_min_closer = false, found_min_perfect = false;
   // Get close to minimum
-  //
+
   screen.clear();
   screen.write_text_line(0, 0, "0-pkt:");
   screen.write_float_line(3, 1, min_kg);
@@ -486,15 +473,15 @@ void spring_measurement()
     }
 
     
-# 426 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
+# 412 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
    __asm__ __volatile__ ("cli" ::: "memory")
-# 426 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 412 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
                  ;
     weight_read = scale.get_units();
     
-# 428 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
+# 414 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
    __asm__ __volatile__ ("sei" ::: "memory")
-# 428 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 414 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
                ;
 
     if (weight_read < min_kg)
@@ -508,15 +495,15 @@ void spring_measurement()
 
     delay(500);
     
-# 440 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
+# 426 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
    __asm__ __volatile__ ("cli" ::: "memory")
-# 440 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 426 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
                  ;
     weight_read = scale.get_units();
     
-# 442 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
+# 428 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
    __asm__ __volatile__ ("sei" ::: "memory")
-# 442 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 428 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
                ;
     screen.write_float_line(3, 3, weight_read);
     delay(500);
@@ -535,15 +522,15 @@ void spring_measurement()
     }
 
     
-# 459 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
+# 445 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
    __asm__ __volatile__ ("cli" ::: "memory")
-# 459 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 445 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
                  ;
     weight_read = scale.get_units();
     
-# 461 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
+# 447 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
    __asm__ __volatile__ ("sei" ::: "memory")
-# 461 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 447 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
                ;
 
     if (weight_read < (min_kg - 0.01))
@@ -561,15 +548,15 @@ void spring_measurement()
 
     delay(500);
     
-# 477 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
+# 463 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
    __asm__ __volatile__ ("cli" ::: "memory")
-# 477 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 463 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
                  ;
     weight_read = scale.get_units();
     
-# 479 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
+# 465 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
    __asm__ __volatile__ ("sei" ::: "memory")
-# 479 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 465 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
                ;
     screen.write_float_line(3, 3, weight_read);
     delay(1500);
@@ -577,6 +564,7 @@ void spring_measurement()
 
   lcd_PROGMEM_to_buffer(9);
   screen.write_text_line(0, 2, buffer);
+
   // Find perfect minimum
   while (!found_min_perfect)
   {
@@ -588,15 +576,15 @@ void spring_measurement()
     }
 
     
-# 496 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
+# 483 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
    __asm__ __volatile__ ("cli" ::: "memory")
-# 496 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 483 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
                  ;
     weight_read = scale.get_units();
     
-# 498 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
+# 485 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
    __asm__ __volatile__ ("sei" ::: "memory")
-# 498 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 485 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
                ;
 
     if (weight_read < (min_kg - 0.001))
@@ -614,15 +602,15 @@ void spring_measurement()
 
     delay(500);
     
-# 514 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
+# 501 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
    __asm__ __volatile__ ("cli" ::: "memory")
-# 514 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 501 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
                  ;
     weight_read = scale.get_units();
     
-# 516 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
+# 503 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
    __asm__ __volatile__ ("sei" ::: "memory")
-# 516 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 503 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
                ;
     screen.write_float_line(3, 3, weight_read);
     delay(2500);
@@ -635,15 +623,15 @@ void spring_measurement()
   button_block_until_OK();
 
   
-# 527 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
+# 514 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
  __asm__ __volatile__ ("cli" ::: "memory")
-# 527 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 514 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
                ;
   scale.tare();
   
-# 529 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
+# 516 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
  __asm__ __volatile__ ("sei" ::: "memory")
-# 529 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 516 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
              ;
 
   /*Spring measurement part 2
@@ -651,7 +639,7 @@ void spring_measurement()
     Calculate spring constants
 
     k = F/x                  */
-# 534 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 521 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
   bool found_max = false;
   int i = 0;
 
@@ -676,15 +664,15 @@ void spring_measurement()
       delay(1000);
 
       
-# 557 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
+# 544 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
      __asm__ __volatile__ ("cli" ::: "memory")
-# 557 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 544 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
                    ;
       weight_read = scale.get_units();
       
-# 559 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
+# 546 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
      __asm__ __volatile__ ("sei" ::: "memory")
-# 559 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 546 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
                  ;
 
       x += step_per_check;
@@ -712,12 +700,12 @@ void spring_measurement()
 
   screen.clear();
 
-  float spring_const, spring_const_avg, spring_const_tot;
+  float spring_const = 0.0f, spring_const_avg = 0.0f, spring_const_tot = 0.0f;
   for (int index = 0; index < i; index++)
   {
-    spring_const_avg = const_k[index] / i;
+    spring_const_avg += const_k[index] / (float)i;
 
-    Serial.print("spring_const_tot: ");
+    Serial.print("spring_const_avg: ");
     Serial.println(spring_const_avg);
     Serial.print("k: ");
     Serial.print(index);
@@ -725,7 +713,7 @@ void spring_measurement()
     Serial.println(const_k[index]);
   }
   // spring_const_avg = spring_const_tot / i;
-  Serial.print("spring_const_avg: ");
+  Serial.print("Final spring const: ");
   Serial.println(spring_const_avg);
 
   lcd_PROGMEM_to_buffer(7);
@@ -742,7 +730,7 @@ void spring_measurement()
      Spring measured
 
      Releasing spring */
-# 614 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 601 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
   bool finished_release = false;
   screen.clear();
   while (!finished_release)
@@ -755,15 +743,15 @@ void spring_measurement()
     }
 
     
-# 625 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
+# 612 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
    __asm__ __volatile__ ("cli" ::: "memory")
-# 625 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 612 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
                  ;
     weight_read = scale.get_units();
     
-# 627 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
+# 614 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
    __asm__ __volatile__ ("sei" ::: "memory")
-# 627 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 614 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
                ;
 
     if (weight_read > 0.001)
@@ -772,15 +760,15 @@ void spring_measurement()
       delay(1000);
 
       
-# 634 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
+# 621 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
      __asm__ __volatile__ ("cli" ::: "memory")
-# 634 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 621 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
                    ;
       weight_read = scale.get_units();
       
-# 636 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
+# 623 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
      __asm__ __volatile__ ("sei" ::: "memory")
-# 636 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 623 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
                  ;
       screen.write_float_line(3, 3, weight_read);
     }
@@ -802,19 +790,19 @@ void spring_measurement_quit()
 // MISC. #################################
 const String format_int(const float value)
 {
-  // writes the (int) value of a float into a char buffer.
+  // float -> int -> char buffer
   return String((int)value);
 }
 
 const String format_float(const float value)
 {
-  // writes the value of a float into a char buffer.
+  // float -> char buffer
   return String(value);
 }
 
 void copy_to_dst(float *src, float *dst, int len)
 {
-  // Function to copy 'len' elements from 'src' to 'dst'
+  // copy 'len' elements from 'src' to 'dst'
   memcpy(dst, src, sizeof(src[0]) * len);
 }
 

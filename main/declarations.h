@@ -14,7 +14,7 @@
 #include "LCD.h"
 #include "stepper.h"
 
-const char string_0[] PROGMEM = "|TB|          |OK|"; // "String 0" etc are strings to store
+const char string_0[] PROGMEM = "|TB|            |OK|"; // "String 0" etc are strings to store
 const char string_1[] PROGMEM = "                |OK|";
 const char string_2[] PROGMEM = "                |OK|";
 const char string_3[] PROGMEM = " ";
@@ -45,13 +45,6 @@ char buffer[21];
 #define ENC_1D 3
 #define ENC_2A 15
 #define ENC_2D 2
-
-// #define LCD_1 12
-// #define LCD_2 13
-// #define LCD_3 11
-
-// #define MM_TO_PULSE 80UL;
-// #define TENTH_MM_TO_PULSE 8UL;
 
 char inChar;
 
@@ -103,3 +96,12 @@ const String format_float(const float value);
 const String format_int(const float value);
 void lcd_PROGMEM_to_buffer(int index);
 void load_cell_tare();
+void spring_measurement();
+void load_cell_calibration();
+void lcd_print_force();
+void lcd_print_spring_const();
+
+// Pointer to stepper class member function
+void up10() { motor.drive_up_10mm(); };
+void dn10() { motor.drive_down_10mm(); };
+void pwr() { motor.poweron(); };
