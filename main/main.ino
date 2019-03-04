@@ -1,4 +1,6 @@
 #include "declarations.h"
+#include "Adafruit_Thermal.h"
+#include "SoftwareSerial.h"
 
 // Pointer to stepper class member functions
 
@@ -65,7 +67,7 @@ MenuItem menu3_1("   Motor opp 10mm >", &up10);
 MenuItem menu3_2(" < Motor ned 10mm >", &dn10);
 MenuItem menu3_3(" < Sett 0pkt last >", &load_cell_tare);
 MenuItem menu3_4(" <  Aktiver motor >", &pwr);
-NumericMenuItem menu3_5(" <      Kraft", &lcd_print_spring_const, 'f', 1, 1, 30, 1, format_int);
+MenuItem menu3_5(" <  Print siste    ", &print_spring_const);
 
 // BUTTONS ###############################
 bool button_get(int BTN, btn_t *btn)
@@ -121,14 +123,6 @@ void encoder_get(ClickEncoder *encoder, enc_t *enc)
 }
 
 // LCD ###################################
-void lcd_print_spring_const()
-{
-  int i = menu3_5.get_value();
-  float const_k = EEPROM.read(i);
-  screen.write_text_float_line(0, 3, "Kraft: ", const_k);
-  delay(2000);
-}
-
 void lcd_PROGMEM_to_buffer(int index) { strcpy_P(buffer, (char *)pgm_read_word(&(string_table[index]))); }
 
 // LOAD CELL #############################
@@ -350,15 +344,6 @@ void load_cell_calibration()
 }
 
 // SPRING ################################
-float spring_const_to_EEPROM(float x, float weight_read, int addr)
-{
-  // Store calculated spring constant [N/mm]
-  float k;
-  k = (weight_read * CONST_g) / (x);
-  EEPROM.write(addr, k);
-  return k;
-}
-
 void spring_measurement()
 {
   float min_kg = menu2_1.get_value();
@@ -651,6 +636,40 @@ void copy_to_dst(float *src, float *dst, int len)
   memcpy(dst, src, sizeof(src[0]) * len);
 }
 
+// PRINTER
+float spring_const_to_EEPROM(float x, float weight_read, int addr)
+{
+  // Store calculated spring constant [N/mm]
+  EEPROM.write(addr, x);
+}
+
+void print_spring_const()
+{
+  for(int q = 0; q < 64; q++)
+  {
+    EEPROM.put(int(&spring[q].k), 39.93);
+    EEPROM.put(int(&spring[q].F), 39.93);
+    EEPROM.put(int(&spring[q].x), 39.93);
+    Serial.print("in: ");
+    Serial.println(q);
+  }
+  
+  float k, f, x;
+  for(int d = 0; d < 64; d++)
+  {
+    EEPROM.get(int(&spring[d].k), k);
+    EEPROM.get(int(&spring[d].F), f);
+    EEPROM.get(int(&spring[d].x), x);
+    Serial.println(k);
+    Serial.println(f);
+    Serial.println(x);
+    Serial.print("out: ");
+    Serial.println(d);
+  }
+  
+  
+}
+
 // MENU ##################################
 void menu_init()
 {
@@ -744,7 +763,7 @@ void menu_handler()
       ms.display();
       inChar = 0;
       break;
-    case '-': // Next item
+    case '-': // Previous item
       ms.prev_1();
       ms.display();
       inChar = 0;
@@ -793,7 +812,7 @@ void setup()
 {
   Serial.begin(9600);
 
-  Timer1.initialize(500);
+  Timer1.initialize(1000);
   Timer1.attachInterrupt(timerIsr);
 
   // Encoder
@@ -810,6 +829,9 @@ void setup()
 
   // Menu
   menu_init();
+
+  Serial.println("HI");
+  print_spring_const();
 }
 
 void loop()

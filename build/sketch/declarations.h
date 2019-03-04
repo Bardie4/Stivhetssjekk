@@ -10,6 +10,7 @@
 #include "HX711.h"                  // https://github.com/bogde/HX711
 #include "MenuSystem.h"             // edited version of https://github.com/jonblack/arduino-menusystem
 #include <EEPROM.h>
+#include <avr/eeprom.h>
 //#include <avr/pgmspace.h>
 #include "LCD.h"
 #include "stepper.h"
@@ -49,7 +50,6 @@ char buffer[21];
 char inChar;
 
 // Screen ###########################
-//Adafruit_LiquidCrystal lcd(LCD_1, LCD_2, LCD_3);
 LCD screen;
 
 // Encoders #########################
@@ -85,11 +85,19 @@ struct scl_t
   float calibration_factor = 43230.0;
 } load_cell;
 
-// Motor
+// Motor ############################
 stepper motor(MOT_STEP, MOT_DIR, MOT_ENA);
-// bool motor_disabled = false;
 
 const float CONST_g = 9.807;
+
+// Spring ###########################
+typedef struct {
+  float k; // 4 byte
+  float F; // 4 byte
+  float x; // 4 byte
+} spring_type; // 13 byte
+
+spring_type spring[64] EEMEM;
 
 // Forward declarations
 const String format_float(const float value);
@@ -98,8 +106,7 @@ void lcd_PROGMEM_to_buffer(int index);
 void load_cell_tare();
 void spring_measurement();
 void load_cell_calibration();
-void lcd_print_force();
-void lcd_print_spring_const();
+void print_spring_const();
 
 // Pointer to stepper class member function
 void up10() { motor.drive_up_10mm(); };

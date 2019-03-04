@@ -1,2 +1,2 @@
-d:\Dokumenter\Stivhetssjekk\build\core\abi.cpp.o: \
- D:\Programmer\Arduino\hardware\arduino\avr\cores\arduino\abi.cpp
+/home/albert/Documents/Stivhetssjekk/build/core/abi.cpp.o: \
+ /home/albert/Downloads/arduino-1.8.8/hardware/arduino/avr/cores/arduino/abi.cpp

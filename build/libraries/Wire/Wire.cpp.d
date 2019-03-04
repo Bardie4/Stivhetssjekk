@@ -1,8 +1,8 @@
-d:\Dokumenter\Stivhetssjekk\build\libraries\Wire\Wire.cpp.o: \
- D:\Programmer\Arduino\hardware\arduino\avr\libraries\Wire\src\Wire.cpp \
- D:\Programmer\Arduino\hardware\arduino\avr\libraries\Wire\src\utility/twi.h \
- D:\Programmer\Arduino\hardware\arduino\avr\libraries\Wire\src\Wire.h \
- D:\Programmer\Arduino\hardware\arduino\avr\cores\arduino/Stream.h \
- D:\Programmer\Arduino\hardware\arduino\avr\cores\arduino/Print.h \
- D:\Programmer\Arduino\hardware\arduino\avr\cores\arduino/WString.h \
- D:\Programmer\Arduino\hardware\arduino\avr\cores\arduino/Printable.h
+/home/albert/Documents/Stivhetssjekk/build/libraries/Wire/Wire.cpp.o: \
+ /home/albert/Downloads/arduino-1.8.8/hardware/arduino/avr/libraries/Wire/src/Wire.cpp \
+ /home/albert/Downloads/arduino-1.8.8/hardware/arduino/avr/libraries/Wire/src/utility/twi.h \
+ /home/albert/Downloads/arduino-1.8.8/hardware/arduino/avr/libraries/Wire/src/Wire.h \
+ /home/albert/Downloads/arduino-1.8.8/hardware/arduino/avr/cores/arduino/Stream.h \
+ /home/albert/Downloads/arduino-1.8.8/hardware/arduino/avr/cores/arduino/Print.h \
+ /home/albert/Downloads/arduino-1.8.8/hardware/arduino/avr/cores/arduino/WString.h \
+ /home/albert/Downloads/arduino-1.8.8/hardware/arduino/avr/cores/arduino/Printable.h

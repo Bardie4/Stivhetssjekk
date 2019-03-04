@@ -1,27 +1,29 @@
-d:\Dokumenter\Stivhetssjekk\build\sketch\main.ino.cpp.o: \
- d:\Dokumenter\Stivhetssjekk\build\sketch\main.ino.cpp \
- D:\Programmer\Arduino\hardware\arduino\avr\cores\arduino/Arduino.h \
- D:\Programmer\Arduino\hardware\arduino\avr\cores\arduino/binary.h \
- D:\Programmer\Arduino\hardware\arduino\avr\cores\arduino/WCharacter.h \
- D:\Programmer\Arduino\hardware\arduino\avr\cores\arduino/WString.h \
- D:\Programmer\Arduino\hardware\arduino\avr\cores\arduino/HardwareSerial.h \
- D:\Programmer\Arduino\hardware\arduino\avr\cores\arduino/Stream.h \
- D:\Programmer\Arduino\hardware\arduino\avr\cores\arduino/Print.h \
- D:\Programmer\Arduino\hardware\arduino\avr\cores\arduino/Printable.h \
- D:\Programmer\Arduino\hardware\arduino\avr\cores\arduino/USBAPI.h \
- D:\Programmer\Arduino\hardware\arduino\avr\cores\arduino/Arduino.h \
- D:\Programmer\Arduino\hardware\arduino\avr\variants\standard/pins_arduino.h \
- d:\Dokumenter\Stivhetssjekk\build\sketch\declarations.h \
- D:\Programmer\Arduino\hardware\arduino\avr\libraries\Wire\src/Wire.h \
- D:\Programmer\Arduino\hardware\arduino\avr\cores\arduino/Stream.h \
- C:\Users\alber\Documents\Arduino\libraries\Adafruit_LiquidCrystal/Adafruit_LiquidCrystal.h \
- D:\Programmer\Arduino\hardware\arduino\avr\cores\arduino/Print.h \
- C:\Users\alber\Documents\Arduino\libraries\Adafruit_LiquidCrystal/utility/Adafruit_MCP23008.h \
- C:\Users\alber\Documents\Arduino\libraries\ClickEncoder/ClickEncoder.h \
- C:\Users\alber\Documents\Arduino\libraries\TimerOne/TimerOne.h \
- C:\Users\alber\Documents\Arduino\libraries\TimerOne/config/known_16bit_timers.h \
- C:\Users\alber\Documents\Arduino\libraries\HX711/HX711.h \
- d:\Dokumenter\Stivhetssjekk\build\sketch\MenuSystem.h \
- D:\Programmer\Arduino\hardware\arduino\avr\libraries\EEPROM\src/EEPROM.h \
- d:\Dokumenter\Stivhetssjekk\build\sketch\LCD.h \
- d:\Dokumenter\Stivhetssjekk\build\sketch\stepper.h
+/home/albert/Documents/Stivhetssjekk/build/sketch/main.ino.cpp.o: \
+ /home/albert/Documents/Stivhetssjekk/build/sketch/main.ino.cpp \
+ /home/albert/Downloads/arduino-1.8.8/hardware/arduino/avr/cores/arduino/Arduino.h \
+ /home/albert/Downloads/arduino-1.8.8/hardware/arduino/avr/cores/arduino/binary.h \
+ /home/albert/Downloads/arduino-1.8.8/hardware/arduino/avr/cores/arduino/WCharacter.h \
+ /home/albert/Downloads/arduino-1.8.8/hardware/arduino/avr/cores/arduino/WString.h \
+ /home/albert/Downloads/arduino-1.8.8/hardware/arduino/avr/cores/arduino/HardwareSerial.h \
+ /home/albert/Downloads/arduino-1.8.8/hardware/arduino/avr/cores/arduino/Stream.h \
+ /home/albert/Downloads/arduino-1.8.8/hardware/arduino/avr/cores/arduino/Print.h \
+ /home/albert/Downloads/arduino-1.8.8/hardware/arduino/avr/cores/arduino/Printable.h \
+ /home/albert/Downloads/arduino-1.8.8/hardware/arduino/avr/cores/arduino/USBAPI.h \
+ /home/albert/Downloads/arduino-1.8.8/hardware/arduino/avr/cores/arduino/Arduino.h \
+ /home/albert/Downloads/arduino-1.8.8/hardware/arduino/avr/variants/standard/pins_arduino.h \
+ /home/albert/Documents/Stivhetssjekk/build/sketch/declarations.h \
+ /home/albert/Downloads/arduino-1.8.8/hardware/arduino/avr/libraries/Wire/src/Wire.h \
+ /home/albert/Downloads/arduino-1.8.8/hardware/arduino/avr/cores/arduino/Stream.h \
+ /home/albert/Arduino/libraries/Adafruit_LiquidCrystal/Adafruit_LiquidCrystal.h \
+ /home/albert/Downloads/arduino-1.8.8/hardware/arduino/avr/cores/arduino/Print.h \
+ /home/albert/Arduino/libraries/Adafruit_LiquidCrystal/utility/Adafruit_MCP23008.h \
+ /home/albert/Arduino/libraries/encoder-master/ClickEncoder.h \
+ /home/albert/Arduino/libraries/TimerOne/TimerOne.h \
+ /home/albert/Arduino/libraries/TimerOne/config/known_16bit_timers.h \
+ /home/albert/Arduino/libraries/HX711-master/HX711.h \
+ /home/albert/Documents/Stivhetssjekk/build/sketch/MenuSystem.h \
+ /home/albert/Downloads/arduino-1.8.8/hardware/arduino/avr/libraries/EEPROM/src/EEPROM.h \
+ /home/albert/Documents/Stivhetssjekk/build/sketch/LCD.h \
+ /home/albert/Documents/Stivhetssjekk/build/sketch/stepper.h \
+ /home/albert/Arduino/libraries/Adafruit_Thermal_Printer_Library/Adafruit_Thermal.h \
+ /home/albert/Downloads/arduino-1.8.8/hardware/arduino/avr/libraries/SoftwareSerial/src/SoftwareSerial.h

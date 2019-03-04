@@ -1,13 +1,12 @@
 #include <Arduino.h>
-#line 1 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
-#line 1 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+#line 1 "/home/albert/Documents/Stivhetssjekk/main/main.ino"
+#line 1 "/home/albert/Documents/Stivhetssjekk/main/main.ino"
 #include "declarations.h"
+#include "Adafruit_Thermal.h"
+#include "SoftwareSerial.h"
 
 // Pointer to stepper class member functions
-// void (stepper::*up10) (void) = &stepper::drive_up_10mm;
-// void (stepper::*dn10) (void) = &stepper::drive_down_10mm;
-// void (stepper::*pwr) (void) = &stepper::poweron;
-// Menu renderer is a global class, do not move
+
 class MyRenderer : public MenuComponentRenderer
 {
 public:
@@ -51,9 +50,6 @@ MyRenderer my_renderer;
 // Forward declarations needed by MenuSystem
 void spring_measurement();
 void load_cell_calibration();
-// void motor_drive_down_10mm();
-// void motor_drive_up_10mm();
-// void motor_poweron();
 void lcd_print_force();
 
 // Menu system which handles displayed text, call to functions via pointers, and
@@ -74,46 +70,46 @@ MenuItem menu3_1("   Motor opp 10mm >", &up10);
 MenuItem menu3_2(" < Motor ned 10mm >", &dn10);
 MenuItem menu3_3(" < Sett 0pkt last >", &load_cell_tare);
 MenuItem menu3_4(" <  Aktiver motor >", &pwr);
-NumericMenuItem menu3_5(" <      Kraft", &lcd_print_spring_const, 'f', 1, 1, 30, 1, format_int);
+MenuItem menu3_5(" <  Print siste    ", &print_spring_const);
 
 // BUTTONS ###############################
-#line 77 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+#line 73 "/home/albert/Documents/Stivhetssjekk/main/main.ino"
 bool button_get(int BTN, btn_t *btn);
-#line 93 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+#line 89 "/home/albert/Documents/Stivhetssjekk/main/main.ino"
 void button_block_until_OK();
-#line 104 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+#line 100 "/home/albert/Documents/Stivhetssjekk/main/main.ino"
 void encoder_get(ClickEncoder *encoder, enc_t *enc);
-#line 130 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
-void lcd_print_spring_const();
-#line 138 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+#line 126 "/home/albert/Documents/Stivhetssjekk/main/main.ino"
 void lcd_PROGMEM_to_buffer(int index);
-#line 141 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+#line 129 "/home/albert/Documents/Stivhetssjekk/main/main.ino"
 void load_cell_init();
-#line 150 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+#line 138 "/home/albert/Documents/Stivhetssjekk/main/main.ino"
 void load_cell_get();
-#line 160 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+#line 148 "/home/albert/Documents/Stivhetssjekk/main/main.ino"
 void load_cell_tare();
-#line 359 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
-float spring_const_to_EEPROM(float x, float weight_read, int addr);
-#line 635 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+#line 614 "/home/albert/Documents/Stivhetssjekk/main/main.ino"
 void spring_measurement_quit();
-#line 642 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+#line 621 "/home/albert/Documents/Stivhetssjekk/main/main.ino"
 const String format_int(const float value);
-#line 648 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+#line 627 "/home/albert/Documents/Stivhetssjekk/main/main.ino"
 const String format_float(const float value);
-#line 654 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+#line 633 "/home/albert/Documents/Stivhetssjekk/main/main.ino"
 void copy_to_dst(float *src, float *dst, int len);
-#line 661 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+#line 640 "/home/albert/Documents/Stivhetssjekk/main/main.ino"
+float spring_const_to_EEPROM(float x, float weight_read, int addr);
+#line 646 "/home/albert/Documents/Stivhetssjekk/main/main.ino"
+void print_spring_const();
+#line 674 "/home/albert/Documents/Stivhetssjekk/main/main.ino"
 void menu_init();
-#line 682 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+#line 695 "/home/albert/Documents/Stivhetssjekk/main/main.ino"
 void menu_handler();
-#line 766 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+#line 779 "/home/albert/Documents/Stivhetssjekk/main/main.ino"
 void timerIsr();
-#line 798 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+#line 811 "/home/albert/Documents/Stivhetssjekk/main/main.ino"
 void setup();
-#line 821 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+#line 837 "/home/albert/Documents/Stivhetssjekk/main/main.ino"
 void loop();
-#line 77 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+#line 73 "/home/albert/Documents/Stivhetssjekk/main/main.ino"
 bool button_get(int BTN, btn_t *btn)
 {
   btn->value = digitalRead(BTN);
@@ -167,14 +163,6 @@ void encoder_get(ClickEncoder *encoder, enc_t *enc)
 }
 
 // LCD ###################################
-void lcd_print_spring_const()
-{
-  int i = menu3_5.get_value();
-  float const_k = EEPROM.read(i);
-  screen.write_text_float_line(0, 3, "Kraft: ", const_k);
-  delay(2000);
-}
-
 void lcd_PROGMEM_to_buffer(int index) { strcpy_P(buffer, (char *)pgm_read_word(&(string_table[index]))); }
 
 // LOAD CELL #############################
@@ -396,15 +384,6 @@ void load_cell_calibration()
 }
 
 // SPRING ################################
-float spring_const_to_EEPROM(float x, float weight_read, int addr)
-{
-  // Store calculated spring constant [N/mm]
-  float k;
-  k = (weight_read * CONST_g) / (x);
-  EEPROM.write(addr, k);
-  return k;
-}
-
 void spring_measurement()
 {
   float min_kg = menu2_1.get_value();
@@ -697,6 +676,40 @@ void copy_to_dst(float *src, float *dst, int len)
   memcpy(dst, src, sizeof(src[0]) * len);
 }
 
+// PRINTER
+float spring_const_to_EEPROM(float x, float weight_read, int addr)
+{
+  // Store calculated spring constant [N/mm]
+  EEPROM.write(addr, x);
+}
+
+void print_spring_const()
+{
+  for(int q = 0; q < 64; q++)
+  {
+    EEPROM.put(int(&spring[q].k), 39.93);
+    EEPROM.put(int(&spring[q].F), 39.93);
+    EEPROM.put(int(&spring[q].x), 39.93);
+    Serial.print("in: ");
+    Serial.println(q);
+  }
+  
+  float k, f, x;
+  for(int d = 0; d < 64; d++)
+  {
+    EEPROM.get(int(&spring[d].k), k);
+    EEPROM.get(int(&spring[d].F), f);
+    EEPROM.get(int(&spring[d].x), x);
+    Serial.println(k);
+    Serial.println(f);
+    Serial.println(x);
+    Serial.print("out: ");
+    Serial.println(d);
+  }
+  
+  
+}
+
 // MENU ##################################
 void menu_init()
 {
@@ -790,7 +803,7 @@ void menu_handler()
       ms.display();
       inChar = 0;
       break;
-    case '-': // Next item
+    case '-': // Previous item
       ms.prev_1();
       ms.display();
       inChar = 0;
@@ -839,7 +852,7 @@ void setup()
 {
   Serial.begin(9600);
 
-  Timer1.initialize(500);
+  Timer1.initialize(1000);
   Timer1.attachInterrupt(timerIsr);
 
   // Encoder
@@ -856,6 +869,9 @@ void setup()
 
   // Menu
   menu_init();
+
+  Serial.println("HI");
+  print_spring_const();
 }
 
 void loop()

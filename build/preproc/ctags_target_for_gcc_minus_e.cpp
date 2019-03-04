@@ -1,12 +1,11 @@
-# 1 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
-# 1 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
-# 2 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 2
+# 1 "/home/albert/Documents/Stivhetssjekk/main/main.ino"
+# 1 "/home/albert/Documents/Stivhetssjekk/main/main.ino"
+# 2 "/home/albert/Documents/Stivhetssjekk/main/main.ino" 2
+# 3 "/home/albert/Documents/Stivhetssjekk/main/main.ino" 2
+# 4 "/home/albert/Documents/Stivhetssjekk/main/main.ino" 2
 
 // Pointer to stepper class member functions
-// void (stepper::*up10) (void) = &stepper::drive_up_10mm;
-// void (stepper::*dn10) (void) = &stepper::drive_down_10mm;
-// void (stepper::*pwr) (void) = &stepper::poweron;
-// Menu renderer is a global class, do not move
+
 class MyRenderer : public MenuComponentRenderer
 {
 public:
@@ -50,9 +49,6 @@ MyRenderer my_renderer;
 // Forward declarations needed by MenuSystem
 void spring_measurement();
 void load_cell_calibration();
-// void motor_drive_down_10mm();
-// void motor_drive_up_10mm();
-// void motor_poweron();
 void lcd_print_force();
 
 // Menu system which handles displayed text, call to functions via pointers, and
@@ -73,7 +69,7 @@ MenuItem menu3_1("   Motor opp 10mm >", &up10);
 MenuItem menu3_2(" < Motor ned 10mm >", &dn10);
 MenuItem menu3_3(" < Sett 0pkt last >", &load_cell_tare);
 MenuItem menu3_4(" <  Aktiver motor >", &pwr);
-NumericMenuItem menu3_5(" <      Kraft", &lcd_print_spring_const, 'f', 1, 1, 30, 1, format_int);
+MenuItem menu3_5(" <  Print siste    ", &print_spring_const);
 
 // BUTTONS ###############################
 bool button_get(int BTN, btn_t *btn)
@@ -129,22 +125,14 @@ void encoder_get(ClickEncoder *encoder, enc_t *enc)
 }
 
 // LCD ###################################
-void lcd_print_spring_const()
-{
-  int i = menu3_5.get_value();
-  float const_k = EEPROM.read(i);
-  screen.write_text_float_line(0, 3, "Kraft: ", const_k);
-  delay(2000);
-}
-
 void lcd_PROGMEM_to_buffer(int index) { strcpy_P(buffer, (char *)
-# 138 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
+# 126 "/home/albert/Documents/Stivhetssjekk/main/main.ino" 3
                                                                 (__extension__({ uint16_t __addr16 = (uint16_t)((uint16_t)(
-# 138 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 126 "/home/albert/Documents/Stivhetssjekk/main/main.ino"
                                                                 &(string_table[index])
-# 138 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
+# 126 "/home/albert/Documents/Stivhetssjekk/main/main.ino" 3
                                                                 )); uint16_t __result; __asm__ __volatile__ ( "lpm %A0, Z+" "\n\t" "lpm %B0, Z" "\n\t" : "=r" (__result), "=z" (__addr16) : "1" (__addr16) ); __result; }))
-# 138 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 126 "/home/albert/Documents/Stivhetssjekk/main/main.ino"
                                                                                                      ); }
 
 // LOAD CELL #############################
@@ -200,16 +188,16 @@ void load_cell_calibration()
   // Call set_scale() with no parameter, Call tare() with no parameter, no
   // interrupts
   
-# 192 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
+# 180 "/home/albert/Documents/Stivhetssjekk/main/main.ino" 3
  __asm__ __volatile__ ("cli" ::: "memory")
-# 192 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 180 "/home/albert/Documents/Stivhetssjekk/main/main.ino"
                ;
   scale.set_scale();
   scale.tare();
   
-# 195 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
+# 183 "/home/albert/Documents/Stivhetssjekk/main/main.ino" 3
  __asm__ __volatile__ ("sei" ::: "memory")
-# 195 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 183 "/home/albert/Documents/Stivhetssjekk/main/main.ino"
              ;
 
   calibration_temp = load_cell.calibration_factor;
@@ -235,15 +223,15 @@ void load_cell_calibration()
     screen.write_text_line(0, 3, buffer);
 
     
-# 219 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
+# 207 "/home/albert/Documents/Stivhetssjekk/main/main.ino" 3
    __asm__ __volatile__ ("cli" ::: "memory")
-# 219 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 207 "/home/albert/Documents/Stivhetssjekk/main/main.ino"
                  ;
     weight_read = scale.get_units();
     
-# 221 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
+# 209 "/home/albert/Documents/Stivhetssjekk/main/main.ino" 3
    __asm__ __volatile__ ("sei" ::: "memory")
-# 221 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 209 "/home/albert/Documents/Stivhetssjekk/main/main.ino"
                ;
     weight_read_prev = weight_read;
     screen.write_float_float_line(2, weight_read, calibration_temp);
@@ -251,16 +239,16 @@ void load_cell_calibration()
     while (!btn_OK.trig)
     {
       
-# 227 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
+# 215 "/home/albert/Documents/Stivhetssjekk/main/main.ino" 3
      __asm__ __volatile__ ("cli" ::: "memory")
-# 227 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 215 "/home/albert/Documents/Stivhetssjekk/main/main.ino"
                    ;
       scale.set_scale(calibration_temp);
       weight_read = scale.get_units(5); // average read
       
-# 230 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
+# 218 "/home/albert/Documents/Stivhetssjekk/main/main.ino" 3
      __asm__ __volatile__ ("sei" ::: "memory")
-# 230 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 218 "/home/albert/Documents/Stivhetssjekk/main/main.ino"
                  ;
 
       // Display on screen if value has changed
@@ -283,7 +271,7 @@ void load_cell_calibration()
         }
 
         else */
-# 248 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 236 "/home/albert/Documents/Stivhetssjekk/main/main.ino"
         if (weight_read > (weight[i] + 0.3))
         {
           calibration_temp += 300.0;
@@ -312,7 +300,7 @@ void load_cell_calibration()
         }
 
         else  */
-# 272 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 260 "/home/albert/Documents/Stivhetssjekk/main/main.ino"
         if (weight_read < (weight[i] - 0.3))
         {
           calibration_temp -= 300.0;
@@ -391,15 +379,15 @@ void load_cell_calibration()
   button_block_until_OK();
 
   
-# 349 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
+# 337 "/home/albert/Documents/Stivhetssjekk/main/main.ino" 3
  __asm__ __volatile__ ("cli" ::: "memory")
-# 349 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 337 "/home/albert/Documents/Stivhetssjekk/main/main.ino"
                ;
   scale.set_scale(calibration_avg);
   
-# 351 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
+# 339 "/home/albert/Documents/Stivhetssjekk/main/main.ino" 3
  __asm__ __volatile__ ("sei" ::: "memory")
-# 351 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 339 "/home/albert/Documents/Stivhetssjekk/main/main.ino"
              ;
 
   // Finished -> Back to menu
@@ -408,15 +396,6 @@ void load_cell_calibration()
 }
 
 // SPRING ################################
-float spring_const_to_EEPROM(float x, float weight_read, int addr)
-{
-  // Store calculated spring constant [N/mm]
-  float k;
-  k = (weight_read * CONST_g) / (x);
-  EEPROM.write(addr, k);
-  return k;
-}
-
 void spring_measurement()
 {
   float min_kg = menu2_1.get_value();
@@ -434,17 +413,17 @@ void spring_measurement()
   button_block_until_OK();
 
   
-# 384 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
+# 363 "/home/albert/Documents/Stivhetssjekk/main/main.ino" 3
  __asm__ __volatile__ ("cli" ::: "memory")
-# 384 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 363 "/home/albert/Documents/Stivhetssjekk/main/main.ino"
                ;
   scale.set_scale();
   scale.tare();
   scale.set_scale(load_cell.calibration_factor);
   
-# 388 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
+# 367 "/home/albert/Documents/Stivhetssjekk/main/main.ino" 3
  __asm__ __volatile__ ("sei" ::: "memory")
-# 388 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 367 "/home/albert/Documents/Stivhetssjekk/main/main.ino"
              ;
 
   /*Spring measurement part 1
@@ -454,7 +433,7 @@ void spring_measurement()
     Three loops that move closer and closer
 
   */
-# 395 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 374 "/home/albert/Documents/Stivhetssjekk/main/main.ino"
   bool found_min_close = false, found_min_closer = false, found_min_perfect = false;
   // Get close to minimum
 
@@ -473,15 +452,15 @@ void spring_measurement()
     }
 
     
-# 412 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
+# 391 "/home/albert/Documents/Stivhetssjekk/main/main.ino" 3
    __asm__ __volatile__ ("cli" ::: "memory")
-# 412 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 391 "/home/albert/Documents/Stivhetssjekk/main/main.ino"
                  ;
     weight_read = scale.get_units();
     
-# 414 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
+# 393 "/home/albert/Documents/Stivhetssjekk/main/main.ino" 3
    __asm__ __volatile__ ("sei" ::: "memory")
-# 414 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 393 "/home/albert/Documents/Stivhetssjekk/main/main.ino"
                ;
 
     if (weight_read < min_kg)
@@ -495,15 +474,15 @@ void spring_measurement()
 
     delay(500);
     
-# 426 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
+# 405 "/home/albert/Documents/Stivhetssjekk/main/main.ino" 3
    __asm__ __volatile__ ("cli" ::: "memory")
-# 426 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 405 "/home/albert/Documents/Stivhetssjekk/main/main.ino"
                  ;
     weight_read = scale.get_units();
     
-# 428 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
+# 407 "/home/albert/Documents/Stivhetssjekk/main/main.ino" 3
    __asm__ __volatile__ ("sei" ::: "memory")
-# 428 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 407 "/home/albert/Documents/Stivhetssjekk/main/main.ino"
                ;
     screen.write_float_line(3, 3, weight_read);
     delay(500);
@@ -522,15 +501,15 @@ void spring_measurement()
     }
 
     
-# 445 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
+# 424 "/home/albert/Documents/Stivhetssjekk/main/main.ino" 3
    __asm__ __volatile__ ("cli" ::: "memory")
-# 445 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 424 "/home/albert/Documents/Stivhetssjekk/main/main.ino"
                  ;
     weight_read = scale.get_units();
     
-# 447 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
+# 426 "/home/albert/Documents/Stivhetssjekk/main/main.ino" 3
    __asm__ __volatile__ ("sei" ::: "memory")
-# 447 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 426 "/home/albert/Documents/Stivhetssjekk/main/main.ino"
                ;
 
     if (weight_read < (min_kg - 0.01))
@@ -548,15 +527,15 @@ void spring_measurement()
 
     delay(500);
     
-# 463 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
+# 442 "/home/albert/Documents/Stivhetssjekk/main/main.ino" 3
    __asm__ __volatile__ ("cli" ::: "memory")
-# 463 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 442 "/home/albert/Documents/Stivhetssjekk/main/main.ino"
                  ;
     weight_read = scale.get_units();
     
-# 465 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
+# 444 "/home/albert/Documents/Stivhetssjekk/main/main.ino" 3
    __asm__ __volatile__ ("sei" ::: "memory")
-# 465 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 444 "/home/albert/Documents/Stivhetssjekk/main/main.ino"
                ;
     screen.write_float_line(3, 3, weight_read);
     delay(1500);
@@ -576,15 +555,15 @@ void spring_measurement()
     }
 
     
-# 483 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
+# 462 "/home/albert/Documents/Stivhetssjekk/main/main.ino" 3
    __asm__ __volatile__ ("cli" ::: "memory")
-# 483 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 462 "/home/albert/Documents/Stivhetssjekk/main/main.ino"
                  ;
     weight_read = scale.get_units();
     
-# 485 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
+# 464 "/home/albert/Documents/Stivhetssjekk/main/main.ino" 3
    __asm__ __volatile__ ("sei" ::: "memory")
-# 485 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 464 "/home/albert/Documents/Stivhetssjekk/main/main.ino"
                ;
 
     if (weight_read < (min_kg - 0.001))
@@ -602,15 +581,15 @@ void spring_measurement()
 
     delay(500);
     
-# 501 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
+# 480 "/home/albert/Documents/Stivhetssjekk/main/main.ino" 3
    __asm__ __volatile__ ("cli" ::: "memory")
-# 501 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 480 "/home/albert/Documents/Stivhetssjekk/main/main.ino"
                  ;
     weight_read = scale.get_units();
     
-# 503 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
+# 482 "/home/albert/Documents/Stivhetssjekk/main/main.ino" 3
    __asm__ __volatile__ ("sei" ::: "memory")
-# 503 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 482 "/home/albert/Documents/Stivhetssjekk/main/main.ino"
                ;
     screen.write_float_line(3, 3, weight_read);
     delay(2500);
@@ -623,15 +602,15 @@ void spring_measurement()
   button_block_until_OK();
 
   
-# 514 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
+# 493 "/home/albert/Documents/Stivhetssjekk/main/main.ino" 3
  __asm__ __volatile__ ("cli" ::: "memory")
-# 514 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 493 "/home/albert/Documents/Stivhetssjekk/main/main.ino"
                ;
   scale.tare();
   
-# 516 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
+# 495 "/home/albert/Documents/Stivhetssjekk/main/main.ino" 3
  __asm__ __volatile__ ("sei" ::: "memory")
-# 516 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 495 "/home/albert/Documents/Stivhetssjekk/main/main.ino"
              ;
 
   /*Spring measurement part 2
@@ -639,7 +618,7 @@ void spring_measurement()
     Calculate spring constants
 
     k = F/x                  */
-# 521 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 500 "/home/albert/Documents/Stivhetssjekk/main/main.ino"
   bool found_max = false;
   int i = 0;
 
@@ -664,15 +643,15 @@ void spring_measurement()
       delay(1000);
 
       
-# 544 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
+# 523 "/home/albert/Documents/Stivhetssjekk/main/main.ino" 3
      __asm__ __volatile__ ("cli" ::: "memory")
-# 544 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 523 "/home/albert/Documents/Stivhetssjekk/main/main.ino"
                    ;
       weight_read = scale.get_units();
       
-# 546 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
+# 525 "/home/albert/Documents/Stivhetssjekk/main/main.ino" 3
      __asm__ __volatile__ ("sei" ::: "memory")
-# 546 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 525 "/home/albert/Documents/Stivhetssjekk/main/main.ino"
                  ;
 
       x += step_per_check;
@@ -730,7 +709,7 @@ void spring_measurement()
      Spring measured
 
      Releasing spring */
-# 601 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 580 "/home/albert/Documents/Stivhetssjekk/main/main.ino"
   bool finished_release = false;
   screen.clear();
   while (!finished_release)
@@ -743,15 +722,15 @@ void spring_measurement()
     }
 
     
-# 612 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
+# 591 "/home/albert/Documents/Stivhetssjekk/main/main.ino" 3
    __asm__ __volatile__ ("cli" ::: "memory")
-# 612 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 591 "/home/albert/Documents/Stivhetssjekk/main/main.ino"
                  ;
     weight_read = scale.get_units();
     
-# 614 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
+# 593 "/home/albert/Documents/Stivhetssjekk/main/main.ino" 3
    __asm__ __volatile__ ("sei" ::: "memory")
-# 614 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 593 "/home/albert/Documents/Stivhetssjekk/main/main.ino"
                ;
 
     if (weight_read > 0.001)
@@ -760,15 +739,15 @@ void spring_measurement()
       delay(1000);
 
       
-# 621 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
+# 600 "/home/albert/Documents/Stivhetssjekk/main/main.ino" 3
      __asm__ __volatile__ ("cli" ::: "memory")
-# 621 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 600 "/home/albert/Documents/Stivhetssjekk/main/main.ino"
                    ;
       weight_read = scale.get_units();
       
-# 623 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino" 3
+# 602 "/home/albert/Documents/Stivhetssjekk/main/main.ino" 3
      __asm__ __volatile__ ("sei" ::: "memory")
-# 623 "d:\\Dokumenter\\Stivhetssjekk\\main\\main.ino"
+# 602 "/home/albert/Documents/Stivhetssjekk/main/main.ino"
                  ;
       screen.write_float_line(3, 3, weight_read);
     }
@@ -804,6 +783,40 @@ void copy_to_dst(float *src, float *dst, int len)
 {
   // copy 'len' elements from 'src' to 'dst'
   memcpy(dst, src, sizeof(src[0]) * len);
+}
+
+// PRINTER
+float spring_const_to_EEPROM(float x, float weight_read, int addr)
+{
+  // Store calculated spring constant [N/mm]
+  EEPROM.write(addr, x);
+}
+
+void print_spring_const()
+{
+  for(int q = 0; q < 64; q++)
+  {
+    EEPROM.put(int(&spring[q].k), 39.93);
+    EEPROM.put(int(&spring[q].F), 39.93);
+    EEPROM.put(int(&spring[q].x), 39.93);
+    Serial.print("in: ");
+    Serial.println(q);
+  }
+
+  float k, f, x;
+  for(int d = 0; d < 64; d++)
+  {
+    EEPROM.get(int(&spring[d].k), k);
+    EEPROM.get(int(&spring[d].F), f);
+    EEPROM.get(int(&spring[d].x), x);
+    Serial.println(k);
+    Serial.println(f);
+    Serial.println(x);
+    Serial.print("out: ");
+    Serial.println(d);
+  }
+
+
 }
 
 // MENU ##################################
@@ -899,7 +912,7 @@ void menu_handler()
       ms.display();
       inChar = 0;
       break;
-    case '-': // Next item
+    case '-': // Previous item
       ms.prev_1();
       ms.display();
       inChar = 0;
@@ -948,7 +961,7 @@ void setup()
 {
   Serial.begin(9600);
 
-  Timer1.initialize(500);
+  Timer1.initialize(1000);
   Timer1.attachInterrupt(timerIsr);
 
   // Encoder
@@ -965,6 +978,9 @@ void setup()
 
   // Menu
   menu_init();
+
+  Serial.println("HI");
+  print_spring_const();
 }
 
 void loop()
