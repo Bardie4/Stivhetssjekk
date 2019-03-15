@@ -537,6 +537,10 @@ void spring_measurement()
       Serial.print("const_k: ");
       Serial.println(const_k[i]);
 
+      EEPROM.put(int(&spring[i].x), x);
+      EEPROM.put(int(&spring[i].F), weight_read);
+      EEPROM.put(int(&spring[i].k), const_k[i]);
+
       i++;
     }
     else
@@ -645,29 +649,40 @@ float spring_const_to_EEPROM(float x, float weight_read, int addr)
 
 void print_spring_const()
 {
-  for(int q = 0; q < 64; q++)
-  {
-    EEPROM.put(int(&spring[q].k), 39.93);
-    EEPROM.put(int(&spring[q].F), 39.93);
-    EEPROM.put(int(&spring[q].x), 39.93);
-    Serial.print("in: ");
-    Serial.println(q);
-  }
+  // 384 pixel width
+  // Char = 
   
-  float k, f, x;
+  float x, f, k;
+  printer.wake();
+  printer.setSize('L');
+  printer.println(F("Resultater"));
+  printer.setSize('M');
+  printer.underlineOn();
+  printer.println(F("#: x[mm]: F[N]: k[N/mm]"));
+  printer.underlineOff();
+
   for(int d = 0; d < 64; d++)
   {
     EEPROM.get(int(&spring[d].k), k);
     EEPROM.get(int(&spring[d].F), f);
     EEPROM.get(int(&spring[d].x), x);
-    Serial.println(k);
-    Serial.println(f);
-    Serial.println(x);
+    Serial.print(k);
+    Serial.print(f);
+    Serial.print(x);
     Serial.print("out: ");
     Serial.println(d);
-  }
-  
-  
+
+    // #1: F x k
+    printer.print(F("#"));
+    printer.print(d);
+    printer.print(F(": "));
+    printer.print(f);
+    printer.print(F("  "));
+    printer.print(x);
+    printer.print(F("  "));
+    printer.println(k);
+  } 
+  printer.sleep();
 }
 
 // MENU ##################################
@@ -694,6 +709,7 @@ void menu_init()
 
 void menu_handler()
 {
+  // Menu handler converts button inputs to inChar which controls the menu display
   // Handle Encoders
   if (enc_up.clockwise < -3)
   {
@@ -717,7 +733,6 @@ void menu_handler()
   }
 
   // Handle Buttons
-
   if (btn_OK.trig)
   {
     inChar = 'd';
@@ -776,6 +791,8 @@ void menu_handler()
   }
 }
 
+
+// INTERRUPT ROUTINE
 void timerIsr()
 {
   encoder_up->service();
@@ -824,8 +841,13 @@ void setup()
   pinMode(BTN_TB, INPUT);
   pinMode(BTN_IN, INPUT);
 
-  // lcd
+  // Lcd
   screen.begin();
+
+  // Printer
+  printerSerial.begin(PRINT_BAUDRATE);
+  printer.begin();
+  printer.sleep();
 
   // Menu
   menu_init();

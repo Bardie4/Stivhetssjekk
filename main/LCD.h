@@ -1,6 +1,6 @@
 /*
   LCD.h - Library for using Adafruit_LiquidCrystal screen with Wire
-  Created by Albert Danielsen, November 18 2019
+  Created by Albert Danielsen, November 18 2018
 */
 
 #ifndef LCD_h

@@ -14,6 +14,8 @@
 //#include <avr/pgmspace.h>
 #include "LCD.h"
 #include "stepper.h"
+#include "Adafruit_Thermal.h"
+#include "SoftwareSerial.h"
 
 const char string_0[] PROGMEM = "|TB|            |OK|"; // "String 0" etc are strings to store
 const char string_1[] PROGMEM = "                |OK|";
@@ -47,10 +49,18 @@ char buffer[21];
 #define ENC_2A 15
 #define ENC_2D 2
 
-char inChar;
+#define TX_PIN 10 // Arduino transmit  YELLOW WIRE  labeled RX on printer
+#define RX_PIN 9  // Arduino receive   GREEN WIRE   labeled TX on printer
+
+#define PRINT_BAUDRATE 19200
 
 // Screen ###########################
 LCD screen;
+char inChar;
+
+// Printer ##########################
+SoftwareSerial printerSerial(RX_PIN, TX_PIN); // Declare SoftwareSerial obj first
+Adafruit_Thermal printer(&printerSerial);     // Pass addr to printer constructor
 
 // Encoders #########################
 ClickEncoder *encoder_up, *encoder_dn;
