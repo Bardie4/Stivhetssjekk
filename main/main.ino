@@ -350,7 +350,7 @@ void spring_measurement()
   float max_kg = menu2_2.get_value();
   unsigned long step_per_check = (unsigned long)menu2_3.get_value();
   float weight_read, F = 0.0, x = 0.0;
-  float const_k[64];
+  float const_k;
 
   // Spring must be attached and hanging loosely
   // Starter test |OK|
@@ -525,9 +525,9 @@ void spring_measurement()
       interrupts();
 
       x += step_per_check;
-      const_k[i] = (weight_read * CONST_g) / x;
+      const_k = (weight_read * CONST_g) / x;
 
-      screen.write_float_float_line(3, weight_read, const_k[i]);
+      screen.write_float_float_line(3, weight_read, const_k);
       Serial.print("x: ");
       Serial.println(x);
       Serial.print("weight_read: ");
@@ -535,11 +535,11 @@ void spring_measurement()
       Serial.print("i: ");
       Serial.println(i);
       Serial.print("const_k: ");
-      Serial.println(const_k[i]);
+      Serial.println(const_k);
 
       EEPROM.put(int(&spring[i].x), x);
       EEPROM.put(int(&spring[i].F), weight_read);
-      EEPROM.put(int(&spring[i].k), const_k[i]);
+      EEPROM.put(int(&spring[i].k), const_k);
 
       i++;
     }
@@ -553,17 +553,19 @@ void spring_measurement()
 
   screen.clear();
 
+  EEPROM.put(int(0), i);
   float spring_const = 0.0f, spring_const_avg = 0.0f, spring_const_tot = 0.0f;
   for (int index = 0; index < i; index++)
   {
-    spring_const_avg += const_k[index] / (float)i;
+    EEPROM.get(int(&spring[index].k), const_k);
+    spring_const_avg += const_k / (float)i;
 
     Serial.print("spring_const_avg: ");
     Serial.println(spring_const_avg);
     Serial.print("k: ");
     Serial.print(index);
     Serial.print(" : ");
-    Serial.println(const_k[index]);
+    Serial.println(const_k);
   }
   // spring_const_avg = spring_const_tot / i;
   Serial.print("Final spring const: ");
@@ -650,8 +652,9 @@ float spring_const_to_EEPROM(float x, float weight_read, int addr)
 void print_spring_const()
 {
   // 384 pixel width
-  // Char = 
-  
+  // Char =
+  int readings;
+  EEPROM.get(int(0), readings);
   float x, f, k;
   printer.wake();
   printer.setSize('L');
@@ -661,7 +664,7 @@ void print_spring_const()
   printer.println(F("#: x[mm]: F[N]: k[N/mm]"));
   printer.underlineOff();
 
-  for(int d = 0; d < 64; d++)
+  for (int d = 0; d < readings; d++)
   {
     EEPROM.get(int(&spring[d].k), k);
     EEPROM.get(int(&spring[d].F), f);
@@ -681,7 +684,10 @@ void print_spring_const()
     printer.print(x);
     printer.print(F("  "));
     printer.println(k);
-  } 
+  }
+
+  printer.println();
+  printer.println();
   printer.sleep();
 }
 
@@ -791,7 +797,6 @@ void menu_handler()
   }
 }
 
-
 // INTERRUPT ROUTINE
 void timerIsr()
 {
@@ -851,9 +856,6 @@ void setup()
 
   // Menu
   menu_init();
-
-  Serial.println("HI");
-  print_spring_const();
 }
 
 void loop()

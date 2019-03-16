@@ -101,10 +101,11 @@ stepper motor(MOT_STEP, MOT_DIR, MOT_ENA);
 const float CONST_g = 9.807;
 
 // Spring ###########################
-typedef struct {
-  float k; // 4 byte
-  float F; // 4 byte
-  float x; // 4 byte
+typedef struct
+{
+  float k;     // 4 byte
+  float F;     // 4 byte
+  float x;     // 4 byte
 } spring_type; // 13 byte
 
 spring_type spring[64] EEMEM;
