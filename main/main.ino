@@ -50,14 +50,15 @@ void load_cell_calibration();
 void lcd_print_force();
 
 // Menu system which handles displayed text, call to functions via pointers, and
-// numeric items (default, min, max, increment)
+// numeric items ( displaytext, pointer, tag, default, min, max, increment, valuetype)
 MenuSystem ms(my_renderer);
 Menu menu1("      Kalibrer     >");
-NumericMenuItem menu1_1("     Vekt#1 [kg]  >", nullptr, '1', 0.685, .100, 1.000, 0.10, format_float);
-NumericMenuItem menu1_2(" <   Vekt#2 [kg]  >", nullptr, '2', 1.960, 1.500, 2.500, 0.10, format_float);
-NumericMenuItem menu1_3(" <   Vekt#3 [kg]  >", nullptr, '3', 5.369, 4.500, 5.500, 0.10, format_float);
+NumericMenuItem menu1_1("     Vekt#1 [kg]  >", nullptr, '1', 1.000, .500, 1.500, 0.10, format_float);
+NumericMenuItem menu1_2(" <   Vekt#2 [kg]  >", nullptr, '2', 2.000, 1.500, 2.500, 0.10, format_float);
+NumericMenuItem menu1_3(" <   Vekt#3 [kg]  >", nullptr, '3', 3.000, 2.500, 3.500, 0.10, format_float);
 MenuItem menu1_4(" <     START", &load_cell_calibration);
 Menu menu2("<  Stivhetssjekk   >");
+// numeric menu items ( displaytext, pointer, tag, default, min, max, increment, valuetype)
 NumericMenuItem menu2_1("   Min. kraft [kg]>", nullptr, '^', 0.0, 0.0, 5.0, 0.1, format_float);
 NumericMenuItem menu2_2(" < Maks kraft [kg]>", nullptr, 'v', 0.1, 1.0, 5.0, 0.1, format_float);
 NumericMenuItem menu2_3(" < steg/sjekk [mm]>", nullptr, 's', 1, 1, 10, 1, format_int);
@@ -374,6 +375,10 @@ void spring_measurement()
   bool found_min_close = false, found_min_closer = false, found_min_perfect = false;
   // Get close to minimum
 
+  // 0 pkt:
+  //   ###
+  // Vekt[kg]
+  //   ###
   screen.clear();
   screen.write_text_line(0, 0, "0-pkt:");
   screen.write_float_line(3, 1, min_kg);
@@ -410,6 +415,8 @@ void spring_measurement()
   }
 
   // Find accurate minimum
+  // vekt [kg]
+  //    ###
   lcd_PROGMEM_to_buffer(9);
   screen.write_text_line(0, 2, buffer);
   while (!found_min_closer)
@@ -446,6 +453,8 @@ void spring_measurement()
     delay(1500);
   }
 
+  // vekt[kg]
+  //   ###
   lcd_PROGMEM_to_buffer(9);
   screen.write_text_line(0, 2, buffer);
 
@@ -484,6 +493,8 @@ void spring_measurement()
     delay(2500);
   }
 
+  // Nullpunkt funnet
+  //             |OK|
   screen.clear();
   screen.write_text_line(0, 1, "Nullpunkt funnet");
   lcd_PROGMEM_to_buffer(1);
@@ -500,6 +511,10 @@ void spring_measurement()
   bool found_max = false;
   int i = 0;
 
+  // Maks vekt: 
+  //       ###
+  // Vekt[kg]|Konst[N/mm]
+  // ###           ###
   screen.clear();
   screen.write_text_line(0, 0, "Maks vekt:");
   screen.write_float_line(3, 1, max_kg);
@@ -554,7 +569,7 @@ void spring_measurement()
   screen.clear();
 
   EEPROM.put(int(0), i);
-  float spring_const = 0.0f, spring_const_avg = 0.0f, spring_const_tot = 0.0f;
+  float spring_const = 0.0f, spring_const_avg = 0.0f;
   for (int index = 0; index < i; index++)
   {
     EEPROM.get(int(&spring[index].k), const_k);
@@ -567,10 +582,15 @@ void spring_measurement()
     Serial.print(" : ");
     Serial.println(const_k);
   }
-  // spring_const_avg = spring_const_tot / i;
+
   Serial.print("Final spring const: ");
   Serial.println(spring_const_avg);
 
+
+  // Stivhet k:
+  //        ###
+  // Neste: slipper fjaer
+  //                  |OK|
   lcd_PROGMEM_to_buffer(7);
   screen.write_text_line(0, 0, buffer);
   screen.write_float_line(3, 1, spring_const_avg);
@@ -652,13 +672,13 @@ float spring_const_to_EEPROM(float x, float weight_read, int addr)
 void print_spring_const()
 {
   // 384 pixel width
-  // Char =
   int readings;
   EEPROM.get(int(0), readings);
   float x, f, k;
   printer.wake();
+  delay(50);
   printer.setSize('L');
-  printer.println(F("Resultater"));
+  printer.println(F("Resultat:"));
   printer.setSize('M');
   printer.underlineOn();
   printer.println(F("#: x[mm]: F[N]: k[N/mm]"));
@@ -679,9 +699,9 @@ void print_spring_const()
     printer.print(F("#"));
     printer.print(d);
     printer.print(F(": "));
-    printer.print(f);
-    printer.print(F("  "));
     printer.print(x);
+    printer.print(F("  "));
+    printer.print(f);
     printer.print(F("  "));
     printer.println(k);
   }
